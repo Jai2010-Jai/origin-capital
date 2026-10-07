@@ -1,0 +1,60 @@
+Higgsfield preview pass — Seedance 2.5, 480p draft, 16:9, generate_audio=false (01–03: 4s, 04–06: 6s)
+Each clip after 01 was generated from the previous clip's last frame (start_image).
+Drafts were finalized at 1080p via draft_job_id (finalize needs the original prompt + medias).
+
+01-rome.mp4          4dbea117-e4bf-451e-abec-bf6a03cbe4c5   end: old 01 last frame (v2, with citizens; v1 empty forum = 7107aa30-…, in rejected/)
+02-renaissance.mp4   6fa9c6e4-0ad9-4c08-b49c-0ea98035a068   start: last frame of 01
+03-industrial.mp4    c0b742d5-bd55-430b-a5e3-5908cd82633c   start: last frame of 02
+04-atomic.mp4        d9260055-8239-47bf-8683-131384772cde   start: last frame of 03 (v3, period-accurate 1951; v2 modernist lab = bf6dc174-…)
+05-modern.mp4        3e1aaffd-d6f3-426a-8d63-593dcc8d2e28   start: last frame of 04, end: network frame (media 4181f2c1…)
+06-frontier.mp4      a5d1c992-4505-4aab-86c0-2f3f160ddd9d   start: network frame (media 4181f2c1…), end: solid #f4efe6 (v2, walks into the light; v1 = ca5e29ea-…)
+
+After replacing any clip here, run tools/build-film.sh to rebuild film/frames + film/manifest.js.
+If you regenerate clip N, also regenerate N+1 from the new last frame (or accept the
+6-frame seam dissolve the build script adds).
+
+1080p finals (Oct 2026) — these are the clips in this folder now; 480p drafts are in draft-480p/
+01-rome.mp4          d1ecaac5-3852-4172-8fca-2032151c2fab
+02-renaissance.mp4   2eac9de2-dea7-40b5-9f94-747f5e9792cd
+03-industrial.mp4    0d4b736e-7211-4e89-8efe-38c47b6c5631
+04-atomic.mp4        689e68c5-188a-4dad-9a6f-5a2173570d9f
+05-modern.mp4        a99aa0ea-deb4-461d-83f8-5a97f07021ac
+06-frontier.mp4      5bd87a84-8373-4505-b1ab-2137d59b0c81
+
+Origin Capital hero (Oct 2026) — 480p drafts in use, pending approval
+plate (no-text hero still, gpt_image_2_5 2k)   5c535173-07bc-4d38-b2aa-c561e00179d8   film/intro/src/plate.png
+intro, 15s walk-through (480p draft)            45b733b5-1daa-484d-b9bc-5a12cb72d553   film/intro/src/intro-draft.mp4 -> film/intro/intro.mp4
+  1080p final already rendered (not in use)     f3bccdc9-baf2-4980-a0ca-02efd1042a19   https://d8j0ntlcm91z4.cloudfront.net/user_3IQ63rYsDcDc7mUw09TUqPrgH5s/hf_20261006_065108_f3bccdc9-baf2-4980-a0ca-02efd1042a19.mp4
+00-portal.mp4, 8s camera through portal -> Rome (480p draft)
+                                                fd398c14-e939-43a0-a60b-670b0741756a   start: intro draft last frame, end: Rome frame 0
+  00-portal.mp4 = portal-draft.mp4 with the intro's exact last frame dissolved over its first 0.75s
+  (so the video → scroll hand-off is pixel-identical). Redo that step if either clip is replaced.
+
+Marc's five scenes (Oct 2026) — 480p drafts in use, pending approval. Old AXIS era clips are in archive-axis-eras/.
+00-portal.mp4        a9804683-afc5-4c4f-97ca-5ea342187779   6s  start: hero video last frame, end: Caesar frame 0 (+0.75s dissolve from intro-last.png)
+01-caesar.mp4        e9de3f76-b243-4992-a6ed-cac5fc0787e6   8s  text-to-video
+02-medici.mp4        1d4a5273-b70d-49a3-8c69-20a16dd34b48   6s  start: last frame of 01
+03-oppenheimer.mp4   49203ce3-027a-4f43-a179-e0d4b8e6332d   7s  start: last frame of 02
+04-musk.mp4          9e14129d-613a-48f7-8643-0ada413df386   7s  start: last frame of 03
+05-frontier.mp4      2f840948-92dc-43c3-af5a-9caf95eabc45   6s  start: last frame of 04, end: solid #f4efe6
+1080p if accepted: 12 credits/second → 40s total ≈ 480 credits.
+
+Hero intro v2 (Oct 2026): 7s, walk straight in and down steps beyond the threshold (no fading) — replaces the 15s v1
+intro, 7s (480p draft)                          1a33a081-8151-4168-a871-affd5755962c   film/intro/src/intro2-draft.mp4 -> film/intro/intro.mp4
+  00-portal.mp4 re-made from portal2-draft.mp4 with this intro's last frame dissolved over its first 0.75s.
+  The 15s v1 and its 1080p final (f3bccdc9) are no longer used.
+
+Oppenheimer v2 (Oct 2026): match-cut from Lorenzo's palace drawing to a Los Alamos blackboard, Trinity fireball/mushroom cloud
+03-oppenheimer.mp4   9ab36471-3991-4a3f-87f2-b88a7ff906c9   7s  start: Medici last frame; post: last 0.5s faded to white (raw in src-untrimmed/)
+04-musk.mp4          (unchanged job 9e14129d) trimmed to start at frame 20 (already white) so it joins the new white ending; full clip in src-untrimmed/
+Known issue: the figure at the Starbase launch wears Oppenheimer's pork-pie hat (carried over from the old 03 ending).
+
+1080p FINALS of Marc's scenes (Oct 2026) — in use now. 480p drafts in draft-480p-scenes/, raw 1080p downloads in film/intro/src/1080/
+hero intro   bf1b1a08-9860-4dc4-91fe-7a99b56bc16c   (from draft 1a33a081)
+00-portal    2c2b15da-0ac9-4b12-aa60-e686590d7579   (from a9804683) + 0.75s dissolve from the hero's last frame
+01-caesar    2b099b3c-07c9-4a1d-82a4-93b687ca1c01   (from e9de3f76)
+02-medici    00f69b08-d970-4cc4-a38c-8ba7702653db   (from 1d4a5273)
+03-oppen.    f085263c-7bc5-4aa7-ae67-dbe7e9a4fe6a   (from 9ab36471) + last 0.5s faded to white
+04-musk      156c0b35-f71d-413c-b97e-7927f0d19655   (from 9e14129d) trimmed to start at frame 20
+05-frontier  45c72595-1f18-4d6e-81f2-6a492eea71bd   (from 2f840948)
+Cost: 564 credits.

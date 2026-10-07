@@ -1,0 +1,11 @@
+# Static site. `netlify deploy --prod` runs tools/stage-site.sh (copies index.html + film/frames into dist/)
+# and publishes dist/. The command here overrides the team's default (react-scripts) build.
+[build]
+  command = "bash tools/stage-site.sh"
+  publish = "dist"
+
+# Film frames are rebuilt in place by tools/build-film.sh, so let browsers revalidate rather than cache forever.
+[[headers]]
+  for = "/film/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"

@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Origin Capital</title>
+<meta name="description" content="Origin Capital — different centuries, same kind of people. We find the rare few who shape what comes next.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="film/intro/poster.webp">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-560 -270 1120 1120'%3E%3Crect x='-560' y='-270' width='1120' height='1120' fill='%230a0a0b'/%3E%3Cpath fill='%23efe9de' d='M-476,574 L-98,563.5 L-93,.5 L-57,39 L-53,574Z M476,574 L98,563.5 L93,.5 L57,39 L53,574Z'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ivory: #efe9de;
+    --ivory-dim: rgba(236, 230, 219, 0.66);
+    --champagne: #cdb88f;
+    --ink: #1b1916;
+    --ink-dim: rgba(27, 25, 22, .72);
+    --bg: #0a0a0b;
+    --serif: "Cormorant Garamond", "Times New Roman", serif;
+    --sans: "Inter", system-ui, -apple-system, sans-serif;
+    --gutter: clamp(16px, 2.9vw, 56px);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ivory); }
+  body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+
+  .hero {
+    position: relative; height: 100vh; height: 100svh; min-height: 560px;
+    overflow: hidden; isolation: isolate;
+    background: #ece4d6 url(film/intro/end.webp) center / cover no-repeat;   /* the empty portal, until frames decode */
+  }
+
+  /* ---------- the opening film: two people walk into the portal (plays by itself) ---------- */
+  .intro {
+    position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%;
+    object-fit: cover; object-position: 50% 50%; display: block;
+    transition: opacity .8s ease, visibility 0s linear .8s;
+  }
+  .intro-done .intro { opacity: 0; visibility: hidden; }
+  .film { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; display: block; pointer-events: none; }
+  /* a whisper of contrast behind the headline, nothing more */
+  .shade {
+    position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: var(--copy-shade, 1);
+    background: linear-gradient(90deg, rgba(248, 243, 234, .55) 0%, rgba(248, 243, 234, .22) 30%, rgba(248, 243, 234, 0) 48%);
+  }
+
+  /* ---------- hero UI (dark ink on the bright sky) ---------- */
+  .ui { position: absolute; inset: 0; z-index: 5; pointer-events: none; color: var(--ink); }
+  .ui a, .ui button { pointer-events: auto; }
+  .ui-body { position: absolute; inset: 0; }
+  .top {
+    position: absolute; left: 0; right: 0; top: 0;
+    padding: clamp(20px, 3.4vh, 40px) var(--gutter);
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  }
+  .brand { display: inline-flex; align-items: center; gap: clamp(12px, 1vw, 18px); font: 500 clamp(15px, 1.15vw, 20px)/1 var(--serif); letter-spacing: .34em; margin-right: -.34em; white-space: nowrap; color: var(--ink); }
+  .mark { --mh: clamp(30px, 2.4vw, 40px); flex: none; height: var(--mh); width: calc(var(--mh) * 952 / 574); fill: currentColor; }
+  .nav { display: flex; align-items: center; gap: clamp(22px, 2.4vw, 46px); }
+  .menu { display: flex; gap: clamp(22px, 2.4vw, 46px); margin: 0; padding: 0; list-style: none; }
+  .menu a { font: 400 13px/1 var(--sans); letter-spacing: .02em; color: var(--ink-dim); padding-bottom: 5px; border-bottom: 1px solid transparent; transition: color .3s, border-color .3s; }
+  .menu a:hover, .menu a[aria-current] { color: var(--ink); border-color: var(--ink); }
+  .cta {
+    font: 400 13px/1 var(--sans); letter-spacing: .02em; color: var(--ink);
+    padding: 12px 22px; border: 1px solid rgba(27, 25, 22, .55); border-radius: 999px; white-space: nowrap;
+    transition: background .35s, color .35s;
+  }
+  .cta:hover { background: var(--ink); color: #f6f1e8; }
+  .copy { position: absolute; left: var(--gutter); top: 29%; max-width: min(44vw, 640px); }
+  .eyebrow { display: flex; align-items: center; gap: 14px; font: 500 11px/1 var(--sans); letter-spacing: .3em; text-transform: uppercase; color: var(--ink); }
+  .eyebrow::before { content: ""; width: 28px; height: 1px; background: currentColor; opacity: .7; }
+  h1 {
+    margin: clamp(16px, 2.2vh, 26px) 0 clamp(16px, 2.4vh, 26px);
+    font: 400 clamp(42px, 4.3vw, 84px)/1.02 var(--serif); letter-spacing: -.012em; color: var(--ink);
+  }
+  .lede { margin: 0; font: 400 clamp(14px, .95vw, 16px)/1.6 var(--sans); color: var(--ink-dim); max-width: 28em; }
+  .explore { display: inline-flex; align-items: center; gap: 14px; margin-top: clamp(24px, 4vh, 44px); font: 400 14px/1 var(--sans); color: var(--ink); }
+  .explore i { width: 32px; height: 1px; background: currentColor; opacity: .7; transition: width .4s; }
+  .explore:hover i { width: 48px; }
+  .explore svg { width: 13px; height: 13px; }
+  .years {
+    position: absolute; left: var(--gutter); bottom: clamp(26px, 4.6vh, 50px); margin: 0; padding: 0; list-style: none;
+    display: flex; align-items: center; gap: 14px; font: 500 10px/1 var(--sans); letter-spacing: .18em; color: var(--ink);
+  }
+  .years li { display: flex; align-items: center; gap: 14px; }
+  .years li + li::before { content: ""; width: clamp(22px, 3vw, 46px); height: 1px; background: rgba(27, 25, 22, .45); }
+  .cue {
+    position: absolute; right: var(--gutter); bottom: clamp(24px, 4.4vh, 48px);
+    display: grid; justify-items: center; gap: 10px; font: 400 11px/1 var(--sans); letter-spacing: .04em; color: var(--ink);
+    background: none; border: 0; padding: 0; cursor: pointer;
+  }
+  .cue i { position: relative; width: 1px; height: clamp(36px, 6vh, 56px); background: repeating-linear-gradient(to bottom, rgba(27, 25, 22, .6) 0 2px, transparent 2px 5px); }
+  .cue i::before { content: ""; position: absolute; left: -2px; top: 0; width: 5px; height: 5px; border-radius: 50%; border: 1px solid var(--ink); background: #f3ece0; }
+  .cue svg { width: 9px; height: 9px; margin-top: -6px; }
+  .intro-done .cue i::before { animation: cue 2.4s cubic-bezier(.5, 0, .3, 1) infinite; }   /* only once the film has finished */
+  @keyframes cue { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(calc(clamp(36px, 6vh, 56px) - 6px)); opacity: 0; } }
+
+  /* ---------- sound toggle (stays visible for the whole journey; a small dark pill reads over any frame) ---------- */
+  .sound {
+    position: fixed; z-index: 20; left: var(--gutter); bottom: clamp(24px, 4.4vh, 48px);
+    display: inline-flex; align-items: center; gap: 10px; padding: 9px 14px 9px 12px; cursor: pointer;
+    color: var(--ivory); background: rgba(16, 14, 12, .42); border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px;
+    font: 500 10.5px/1 var(--sans); letter-spacing: .22em; text-transform: uppercase;
+    transition: bottom .6s cubic-bezier(.2, .7, .2, 1);
+  }
+  .sound .bars { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
+  .sound .bars i { width: 2px; height: 3px; background: currentColor; }
+  .sound.on .bars i { height: 6px; }                       /* on, waiting for the browser to allow it */
+  .sound.playing .bars i { animation: eq 1.1s ease-in-out infinite; }
+  .sound.playing .bars i:nth-child(2) { animation-delay: -.45s; } .sound.playing .bars i:nth-child(3) { animation-delay: -.2s; } .sound.playing .bars i:nth-child(4) { animation-delay: -.7s; }
+  @keyframes eq { 0%, 100% { height: 3px; } 50% { height: 12px; } }
+  .sound:hover { background: rgba(16, 14, 12, .6); }
+  .sound.lift { bottom: clamp(96px, 13vh, 130px); }           /* clear of the page footer */
+  /* on the page after the film the toggle tucks into the corner as a small icon, off the content */
+  .sound.compact { left: auto; right: var(--gutter); padding: 11px; }
+  .sound.compact .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .years { left: calc(var(--gutter) + 150px); }              /* the sound toggle sits at the start of the row */
+
+  /* ---------- scroll journey (pinned; scroll drives the camera once the opening film has finished) ---------- */
+  .has-film .journey { height: 2000vh; }
+  .has-film .journey > .hero { position: sticky; top: 0; }
+  .has-film .ui, .has-film .ui-body { will-change: opacity, transform; }
+  /* timeline: era name up top, with every era as a dot on a rail that fills as you scroll */
+  .tl {
+    position: absolute; z-index: 3; left: 0; right: 0; top: 0;
+    padding: clamp(24px, 4.6vh, 50px) var(--gutter) 0;
+    display: grid; justify-items: center; gap: clamp(16px, 2.6vh, 26px);
+    pointer-events: none; opacity: 0; transform: translateY(-10px);
+    transition: opacity .9s ease, transform 1.1s cubic-bezier(.2,.7,.2,1);
+    will-change: opacity, transform;   /* own layer: painted once, not with every film frame */
+  }
+  .tl::before {
+    content: ""; position: absolute; z-index: -1; left: 0; right: 0; top: 0; height: clamp(200px, 32vh, 320px);
+    background: linear-gradient(rgba(8,8,9,.58), rgba(8,8,9,.22) 55%, rgba(8,8,9,0));
+  }
+  .tl.on { opacity: 1; transform: none; }
+  .tl-era { display: grid; justify-items: center; gap: 12px; text-align: center; text-shadow: 0 1px 22px rgba(0,0,0,.45); transition: opacity .45s ease, transform .6s cubic-bezier(.2,.7,.2,1); }
+  .tl-era.swap { opacity: 0; transform: translateY(6px); }
+  .tl-era .age { font: 500 11px/1 var(--sans); letter-spacing: .34em; margin-right: -.34em; text-transform: uppercase; color: var(--champagne); }
+  .tl-era .nm { font: 300 clamp(34px, 3.6vw, 64px)/1 var(--serif); letter-spacing: .06em; text-transform: uppercase; color: var(--ivory); }
+  .tl-era .yr { font: 500 11px/1 var(--sans); letter-spacing: .3em; margin-right: -.3em; text-transform: uppercase; color: rgba(238, 232, 221, .82); }
+  /* the scene's line, set low like a subtitle */
+  .tl-line {
+    position: absolute; z-index: 3; left: 50%; bottom: clamp(30px, 7vh, 72px); transform: translateX(-50%);
+    opacity: 0; pointer-events: none;
+    width: min(90vw, 760px); margin: 0; text-align: center; white-space: pre-line;
+    font: italic 400 clamp(20px, 1.9vw, 32px)/1.3 var(--serif); color: var(--ivory);
+    text-shadow: 0 1px 24px rgba(0,0,0,.65), 0 0 2px rgba(0,0,0,.3);
+    transition: opacity .6s ease;
+  }
+  .tl-line.on { opacity: 1; }
+  /* over near-white frames (a flash, the portal glare) the dark backings would read as smudges: switch to ink */
+  .tl::before, .tl-line::before { transition: opacity .5s ease; }
+  .tl-era .nm, .tl-era .yr, .tl-line, .tl-rail .lb { transition: color .5s ease, text-shadow .5s ease; }
+  .bright .tl::before, .bright .tl-line::before { opacity: 0; }
+  .bright .tl-era .nm, .bright .tl-line { color: #1b1916; text-shadow: none; }
+  .bright .tl-era .yr, .bright .tl-rail .lb { color: rgba(27, 25, 22, .6); text-shadow: none; }
+  .bright .tl-era .age { color: #8a6c3c; }
+  .bright .tl-rail::before { background: rgba(27, 25, 22, .25); }
+  .tl-line::before {                                       /* a soft dark pool so the line reads over smoke and sky */
+    content: ""; position: absolute; z-index: -1; inset: -46% -14%;
+    background: radial-gradient(closest-side, rgba(8, 8, 9, .5), rgba(8, 8, 9, 0));
+  }
+  .tl-rail { position: relative; width: min(720px, 84vw); height: 30px; }
+  .tl-rail::before, .tl-fill { content: ""; position: absolute; left: 0; right: 0; top: 4px; height: 1px; }
+  .tl-rail::before { background: rgba(238, 232, 221, .3); }
+  .tl-fill { background: var(--champagne); transform-origin: 0 50%; transform: scaleX(0); will-change: transform; }
+  .tl-rail > [role=listitem] { position: absolute; top: 0; transform: translateX(-50%); display: grid; justify-items: center; gap: 10px; }
+  .tl-rail .dot {
+    width: 9px; height: 9px; border-radius: 50%; box-sizing: border-box;
+    background: #0d0c0b; border: 1px solid rgba(238, 232, 221, .55);
+    transition: background .5s, border-color .5s, transform .5s, box-shadow .5s;
+  }
+  .tl-rail .lb { font: 500 11px/1 var(--sans); letter-spacing: .14em; white-space: nowrap; color: rgba(238, 232, 221, .55); text-shadow: 0 1px 8px rgba(0,0,0,.6); transition: color .5s; }
+  .tl-rail .past .dot { background: var(--champagne); border-color: var(--champagne); }
+  .tl-rail .past .lb { color: rgba(238, 232, 221, .78); }
+  .tl-rail .now .dot { background: var(--ivory); border-color: var(--ivory); transform: scale(1.4); box-shadow: 0 0 14px rgba(255, 238, 210, .7); }
+  .tl-rail .now .lb { color: var(--ivory); }
+  @media (max-width: 600px) { .tl-rail .lb { font-size: 9px; letter-spacing: .06em; } }
+
+  /* ---------- after the film: the page the camera walks out into (scrolls normally) ---------- */
+  .after {
+    --ink: #1c1a17; --ink-dim: rgba(28, 26, 23, .62); --ink-faint: rgba(28, 26, 23, .45); --paper: #f4efe6;
+    position: relative; z-index: 1; color: var(--ink); background: var(--paper);
+  }
+  /* with the film, the page waits invisibly over the last screen and fades in once the frame is fully white */
+  .has-film .after { opacity: 0; visibility: hidden; transition: opacity .9s ease, visibility 0s linear .9s; }
+  .has-film .after.arrived { opacity: 1; visibility: visible; transition: opacity .9s ease; }
+  .after a { color: inherit; }
+  .a-eyebrow { font: 500 10px/1.9 var(--sans); letter-spacing: .38em; text-transform: uppercase; color: var(--ink); }
+  .a-dash { display: inline-flex; align-items: center; gap: 12px; }
+  .a-dash::before { content: ""; width: 22px; height: 1px; background: currentColor; opacity: .7; }
+  .a-h { margin: 0; font: 400 clamp(38px, 3.9vw, 66px)/1.05 var(--serif); letter-spacing: -.012em; color: var(--ink); }
+  .a-sub { margin: 0; font: 400 clamp(14px, 1.02vw, 17px)/1.6 var(--sans); color: var(--ink-dim); }
+  .a-pill {
+    display: inline-flex; align-items: center; gap: 14px; padding: 15px 30px; border-radius: 999px;
+    background: #141210; color: #f6f1e8 !important; font: 400 13.5px/1 var(--sans); letter-spacing: .01em;
+    transition: background .3s, transform .3s;
+  }
+  .a-pill:hover { background: #2c2823; }
+  .a-link { display: inline-flex; align-items: center; gap: 12px; font: 400 13.5px/1 var(--sans); color: var(--ink); }
+  .a-link span { padding-bottom: 5px; border-bottom: 1px solid rgba(28, 26, 23, .35); transition: border-color .3s; }
+  .a-link:hover span { border-color: var(--ink); }
+  .a-pill svg, .a-link svg { width: 14px; height: 14px; flex: none; }
+
+  /* 1 · intro, over soft clouds just past the portal */
+  .a-intro {
+    position: relative; text-align: center; padding: clamp(150px, 26vh, 300px) var(--gutter) clamp(120px, 20vh, 240px);
+    background: var(--paper) url(film/after/clouds-top.webp) center top / cover no-repeat;
+  }
+  .a-intro::after {                                              /* melt the clouds into the paper below */
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 38%; pointer-events: none;
+    background: linear-gradient(rgba(244, 239, 230, 0), var(--paper));
+  }
+  .a-intro > * { position: relative; z-index: 1; }
+  .a-intro .a-eyebrow { display: block; max-width: 30em; margin: 0 auto; }
+  .a-intro .a-h { margin: clamp(18px, 2.4vh, 26px) 0 clamp(16px, 2.2vh, 24px); }
+  .a-intro .a-sub { max-width: 27em; margin: 0 auto clamp(26px, 3.6vh, 38px); }
+  .a-intro .a-link { margin-top: clamp(18px, 2.6vh, 26px); }
+  .a-intro .a-actions { display: flex; flex-direction: column; align-items: center; }
+
+  /* 2 · portfolio */
+  .a-port { padding: clamp(40px, 6vh, 80px) var(--gutter) clamp(60px, 9vh, 110px); max-width: 1440px; margin: 0 auto; }
+  .a-port-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; margin-bottom: clamp(30px, 4.4vh, 52px); }
+  .a-port-head .a-h { margin-top: 18px; font-size: clamp(42px, 4.4vw, 76px); }
+  .a-port-head p { margin: 0 0 8px; max-width: 24em; font: 400 13px/1.6 var(--sans); color: var(--ink-dim); }
+  .a-grid {
+    list-style: none; margin: 0; padding: 0; counter-reset: co;
+    display: grid; grid-template-columns: repeat(3, 1fr); column-gap: clamp(20px, 3vw, 56px);
+  }
+  .a-card {
+    counter-increment: co; display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: 18px;
+    padding: clamp(20px, 3vh, 30px) 0; border-top: 1px solid rgba(28, 26, 23, .16);
+  }
+  .a-card::before { content: counter(co, decimal-leading-zero); min-width: 2.2em; font: 500 10px/1 var(--sans); letter-spacing: .16em; font-variant-numeric: tabular-nums; color: var(--ink-faint); }
+  .a-card h3 { margin: 0; font: 400 clamp(24px, 2vw, 34px)/1.05 var(--serif); letter-spacing: -.005em; font-variant-numeric: lining-nums; color: var(--ink); transition: transform .5s cubic-bezier(.2, .7, .2, 1); }
+  .a-card:hover h3 { transform: translateX(4px); }
+  .a-card p { margin: 0; font: 500 10px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-faint); white-space: nowrap; }
+  .a-all { display: flex; justify-content: center; margin-top: clamp(40px, 6vh, 70px); }
+
+  /* 3 · for founders, the two travellers walking on */
+  .a-found {
+    position: relative; text-align: center; min-height: clamp(640px, 100vh, 980px);
+    padding: clamp(80px, 12vh, 140px) var(--gutter) 0;
+    background: var(--paper); isolation: isolate;
+  }
+  .a-found::after {                                            /* the travellers walking on, toned to the page's cream */
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: url(film/after/founders.webp) center bottom / cover no-repeat;
+    filter: saturate(.62) brightness(1.04);
+  }
+  .a-found::before {                                           /* the portfolio's paper melts into the sky */
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 30%; pointer-events: none;
+    background: linear-gradient(var(--paper), rgba(244, 239, 230, 0));
+  }
+  .a-found > * { position: relative; z-index: 1; }
+  .a-found .a-h { margin: 22px auto 18px; }
+  .a-found .a-sub { max-width: 27em; margin: 0 auto 30px; }
+
+  /* 4 · footer */
+  .a-foot {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px 24px;
+    padding: 0 var(--gutter) clamp(22px, 3.6vh, 36px); text-align: left;
+  }
+  .a-brand { display: inline-flex; align-items: center; gap: 12px; font: 500 clamp(13px, .95vw, 16px)/1 var(--serif); letter-spacing: .36em; white-space: nowrap; color: var(--ink); }
+  .a-brand .mark { --mh: clamp(24px, 1.8vw, 30px); }
+  .a-nav { display: flex; gap: clamp(18px, 2vw, 34px); font: 400 11.5px/1 var(--sans); color: var(--ink-dim); }
+  .a-nav a:hover { color: var(--ink); }
+  .a-tag { justify-self: end; text-align: left; font: 400 11.5px/1.45 var(--sans); color: var(--ink-dim); }
+
+  @media (max-width: 900px) {
+    .a-port-head { flex-direction: column; align-items: flex-start; }
+    .a-grid { grid-template-columns: repeat(2, 1fr); }
+    .a-foot { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+    .a-tag { justify-self: center; text-align: center; }
+  }
+  @media (max-width: 560px) {
+    .sound.lift { bottom: 150px; }                           /* the stacked footer is taller on phones */
+    .a-grid { grid-template-columns: 1fr; }
+    .a-nav { flex-wrap: wrap; justify-content: center; }
+  }
+
+  /* entrance */
+  .rise { opacity: 0; transform: translateY(14px); transition: opacity 1.2s ease, transform 1.4s cubic-bezier(.2,.7,.2,1); }
+  .loaded .rise { opacity: 1; transform: none; }
+  .loaded .d1 { transition-delay: .35s; } .loaded .d2 { transition-delay: .55s; }
+  .loaded .d3 { transition-delay: .75s; } .loaded .d4 { transition-delay: 1s; }
+
+  @media (max-width: 900px) {
+    .nav .menu { display: none; }
+    /* the two people walk at the bottom centre: keep the copy above them, under the nav */
+    .copy { top: clamp(84px, 12vh, 120px); right: var(--gutter); max-width: none; }
+    h1 { font-size: clamp(34px, 9.6vw, 52px); }
+    .explore { margin-top: 18px; }
+    .years { display: none; }
+    .cta { padding: 10px 16px; font-size: 12px; }
+    .shade { background: linear-gradient(to bottom, rgba(248, 243, 234, .85) 0%, rgba(248, 243, 234, .6) 30%, rgba(248, 243, 234, 0) 52%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sound.playing .bars i { animation: none; height: 8px; }
+    .rise, .intro, .has-film .after { transition: none; }
+    .intro-done .cue i::before { animation: none; }
+  }
+</style>
+</head>
+<body>
+<!-- the Origin Capital mark: two pillars, a doorway, standing on the horizon -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="oc-mark" viewBox="-476 0 952 574">
+  <polygon points="-476,574 -98,563.5 -93,.5 -57,39 -53,574"/><polygon points="476,574 98,563.5 93,.5 57,39 53,574"/>
+</symbol></svg>
+<div class="journey" id="journey">
+<section class="hero" id="hero">
+  <canvas class="film" id="film" aria-hidden="true"></canvas>
+  <video class="intro" id="intro" muted playsinline preload="auto" poster="film/intro/poster.webp" aria-hidden="true">
+    <source src="film/intro/intro.mp4" type="video/mp4">
+  </video>
+  <div class="shade" aria-hidden="true"></div>
+  <div class="tl" id="tl">
+    <p class="tl-era" aria-live="polite"><span class="age"></span><span class="nm"></span><span class="yr"></span></p>
+    <div class="tl-rail" role="list" aria-label="Timeline"><span class="tl-fill"></span></div>
+  </div>
+  <p class="tl-line" id="tlLine" aria-live="polite"></p>
+
+  <div class="ui" id="ui">
+    <header class="top rise">
+      <a class="brand" href="#" aria-label="Origin Capital"><svg class="mark" aria-hidden="true"><use href="#oc-mark"/></svg><span>ORIGIN CAPITAL</span></a>
+      <div class="nav">
+        <nav aria-label="Primary">
+          <ul class="menu">
+            <li><a href="#">Philosophy</a></li>
+            <li><a href="#" aria-current="page">Portfolio</a></li>
+            <li><a href="#">People</a></li>
+            <li><a href="#">Insights</a></li>
+          </ul>
+        </nav>
+        <a class="cta" href="mailto:hello@origincapital.com">Get in touch</a>
+      </div>
+    </header>
+
+    <div class="ui-body" id="uiBody">
+      <main class="copy">
+        <div class="eyebrow rise d1">Our Belief</div>
+        <h1 class="rise d2">Different centuries.<br>Same kind of people.</h1>
+        <p class="lede rise d3">We find the rare few who shape what comes next.</p>
+        <a class="explore rise d4" href="#">Explore Portfolio <i></i>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2 8h12M9.5 3.5 14 8l-4.5 4.5"/></svg></a>
+      </main>
+      <ol class="years rise d4" id="years" aria-label="Eras"></ol>
+      <button class="cue rise d4" id="cue" aria-label="Scroll into the portal">Scroll <i></i>
+        <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1"><path d="M1.5 4 5 7.5 8.5 4"/></svg></button>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- the camera walks through the last portal into this page; it rides up over the film's final white -->
+<div class="after" id="after">
+  <section class="a-intro">
+    <span class="a-eyebrow">We have been looking for them throughout history.</span>
+    <h2 class="a-h">Now we are looking for you.</h2>
+    <p class="a-sub">We invest at the earliest stages in exceptional people pursuing consequential ideas.</p>
+    <div class="a-actions">
+      <a class="a-pill" href="#portfolio">Meet the founders we back <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2 8h12M9.5 3.5 14 8l-4.5 4.5"/></svg></a>
+      <a class="a-link" href="mailto:hello@origincapital.com"><span>Tell us what you are building</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2 8h12M9.5 3.5 14 8l-4.5 4.5"/></svg></a>
+    </div>
+  </section>
+
+  <section class="a-port" id="portfolio">
+    <div class="a-port-head">
+      <div><span class="a-eyebrow a-dash">Portfolio</span><h2 class="a-h">The rare few.</h2></div>
+      <p>A selection of founders we are proud to support across AI, science, infrastructure, and more.</p>
+    </div>
+    <ul class="a-grid">
+      <li class="a-card"><h3>Micro1</h3><p>Scouted</p></li>
+      <li class="a-card"><h3>Etched</h3><p>Series A</p></li>
+      <li class="a-card"><h3>Rogo</h3><p>Series A</p></li>
+      <li class="a-card"><h3>Wispr</h3><p>Seed</p></li>
+      <li class="a-card"><h3>Wombo AI</h3><p>Seed</p></li>
+      <li class="a-card"><h3>Superpower</h3><p>Seed</p></li>
+      <li class="a-card"><h3>Babylon Bio</h3><p>Seed</p></li>
+      <li class="a-card"><h3>Lula / Gail</h3><p>Seed</p></li>
+      <li class="a-card"><h3>Protector</h3><p>Seed</p></li>
+      <li class="a-card"><h3>Simly</h3><p>Seed</p></li>
+      <li class="a-card"><h3>Pure Poker</h3><p>Seed</p></li>
+      <li class="a-card"><h3>Kled AI</h3><p>Seed</p></li>
+      <li class="a-card"><h3>Jolly</h3><p>Seed</p></li>
+      <li class="a-card"><h3>Rove</h3><p>Seed</p></li>
+      <li class="a-card"><h3>Linq</h3><p>Seed</p></li>
+    </ul>
+    <div class="a-all"><a class="a-link" href="#"><span>View all portfolio companies</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2 8h12M9.5 3.5 14 8l-4.5 4.5"/></svg></a></div>
+  </section>
+
+  <section class="a-found">
+    <span class="a-eyebrow a-dash">For founders</span>
+    <h2 class="a-h">Building something<br>that should exist?</h2>
+    <p class="a-sub">We invest at the earliest stages in exceptional people pursuing consequential ideas.</p>
+    <a class="a-pill" href="mailto:hello@origincapital.com">Tell us what you are building <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2 8h12M9.5 3.5 14 8l-4.5 4.5"/></svg></a>
+    <footer class="a-foot" id="aFoot">
+      <span class="a-brand"><svg class="mark" aria-hidden="true"><use href="#oc-mark"/></svg><span>ORIGIN CAPITAL</span></span>
+      <nav class="a-nav" aria-label="Footer"><a href="#portfolio">Portfolio</a><a href="#">Philosophy</a><a href="#">Team</a><a href="#">Insights</a><a href="mailto:hello@origincapital.com">Contact</a></nav>
+      <span class="a-tag">Different centuries.<br>Same kind of people.</span>
+    </footer>
+  </section>
+</div>
+
+  <button class="sound" id="sound" aria-pressed="false">
+    <span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lbl">Sound on</span>
+  </button>
+
+<script src="film/manifest.js"></script>
+<script>
+(() => {
+  // the eras the camera travels through after the portal (labels for the timelines and the end screen;
+  // h is each doorway's height on the end screen, growing in perspective)
+  // Marc's five scenes: the person becomes more central as we approach the present
+  const PORTALS = [
+    { key: 'caesar',      h: 240, year: '44 BC', age: '01 — The Classical Age', who: 'Julius Caesar',         where: '44 BC · Rome',
+      line: 'Some inherit the world.\nOthers reshape it.', name: ['Julius Caesar'] },
+    { key: 'medici',      h: 262, year: '1478',  age: '02 — The Renaissance',  who: 'Lorenzo de’ Medici',    where: '1478 · Florence',
+      line: 'Greatness recognizes greatness.', name: ['Lorenzo', 'de’ Medici'] },
+    { key: 'oppenheimer', h: 290, year: '1945',  age: '03 — The Atomic Age',   who: 'J. Robert Oppenheimer', where: '1945 · Los Alamos',
+      line: 'A few minds can change what is possible.', name: ['Oppenheimer'] },
+    { key: 'musk',        h: 322, year: '2026',  age: '04 — The Space Age',    who: 'Elon Musk',             where: 'The Present · Starbase',
+      line: 'The frontier still belongs to those\nwilling to push it.', name: ['Elon Musk'] },
+    { key: 'next',        h: 400, year: '????',  age: '05 — The Next Age',     who: '????',                  where: 'The Frontier',
+      line: 'We find the rare few who shape what comes next.', name: ['The Frontier'] },
+  ];
+  const FILM = window.AXIS_FILM;
+  const hero = document.getElementById('hero');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const filmOn = !!FILM;
+  if (filmOn) document.documentElement.classList.add('has-film');
+  document.getElementById('years').innerHTML = PORTALS.map(p => `<li>${p.year === '????' ? '????' : p.year}</li>`).join('');
+
+  // ---------- scroll journey ----------
+  // Scroll progress p ∈ [0,1] across #journey (the hero stays pinned). Nothing moves until the opening film
+  // (two people walking through the portal) has finished on its own; then:
+  //   0 → START      the hero copy and nav fade away
+  //   START → END    scroll scrubs the film: the camera flies through the portal, then Rome → Next Frontier
+  //   END → WHITE    the last frames settle into one even ivory, and the page after the film fades in on top
+  //                  of it, already in place (it overlaps the journey's last screen), so there is nothing to scroll
+  const START = .03;
+  let END = .94, WHITE = .955;                             // set in measure(): they depend on the viewport height
+  const PAPER = '#f4efe6';
+  const journey = document.getElementById('journey');
+  const film = document.getElementById('film'), fc = film.getContext('2d');
+  const ui = document.getElementById('ui'), uiBody = document.getElementById('uiBody');
+  const tl = document.getElementById('tl'), tlEra = tl.querySelector('.tl-era'), tlFill = tl.querySelector('.tl-fill');
+  const REVEAL = 44;                                         // an era is named once it appears, not while the last one fades
+  const eraAt = i => FILM ? FILM.eras[i].start + (i ? REVEAL : 0) : 0;
+  const tlItems = [];
+  if (FILM) FILM.eras.forEach((e, i) => {
+    const li = document.createElement('div');
+    li.setAttribute('role', 'listitem');
+    li.style.left = (i / (FILM.eras.length - 1) * 100) + '%';
+    li.innerHTML = `<span class="dot"></span><span class="lb">${PORTALS[i].year}</span>`;
+    tl.querySelector('.tl-rail').appendChild(li);
+    tlItems.push(li);
+  });
+  const clamp01 = v => Math.min(1, Math.max(0, v));
+  const ramp = (v, a, b) => clamp01((v - a) / (b - a));
+  const smooth = v => v * v * (3 - 2 * v);
+  let cam = { vw: 1, vh: 1 };
+
+  // Canvas resolution: enough device pixels to show every source pixel of the 1080p frame
+  // (up to the screen's own density), so the picture is never squeezed and re-stretched.
+  let fd = 1;
+  function sizeFilm() {
+    const coverW = Math.max(cam.vw, cam.vh * 16 / 9);
+    fd = Math.min(window.devicePixelRatio || 1, Math.max(1, FILM.w / coverW));
+    film.width = Math.round(cam.vw * fd); film.height = Math.round(cam.vh * fd);
+    fc.setTransform(fd, 0, 0, fd, 0, 0);
+  }
+
+  // Frames: every JPEG is fetched once and kept compressed (~13 MB). Only a window around the
+  // playhead is decoded, off the main thread, into ImageBitmaps, so a draw never waits on a decode.
+  const srcs = [], bmps = new Map(), decoding = new Set();
+  const AHEAD = 20, BEHIND = 6, KEEP = 24, LANES = 4;           // ~27 decoded 1080p frames live (~225 MB)
+  let head = 0, dir = 1;
+  const fetchFrame = i => location.protocol === 'file:'
+    ? new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = FILM.src(i); })
+    : fetch(FILM.src(i)).then(r => r.blob());
+  function loadFrames() {
+    const n = FILM.frames, order = [], seen = new Uint8Array(n);
+    for (const step of [24, 6, 2, 1]) for (let i = 0; i < n; i += step) if (!seen[i]) { seen[i] = 1; order.push(i); }
+    let next = 0;
+    const pump = () => {
+      if (next >= order.length) return;
+      const i = order[next++];
+      fetchFrame(i).then(src => { srcs[i] = src; schedule(); }, () => {}).finally(pump);
+    };
+    for (let k = 0; k < 6; k++) pump();
+  }
+  function decode(i) {
+    if (i < 0 || i >= FILM.frames || !srcs[i] || bmps.has(i) || decoding.has(i) || decoding.size >= LANES) return;
+    decoding.add(i);
+    const src = srcs[i];
+    (src instanceof Blob ? createImageBitmap(src) : src.decode().then(() => createImageBitmap(src))).then(b => {
+      decoding.delete(i);
+      if (Math.abs(i - head) > KEEP) b.close();
+      else { bmps.set(i, b); if (Math.abs(i - head) <= 1) kick(); }
+      schedule();
+    }, () => decoding.delete(i));
+  }
+  function schedule() {
+    for (const [i, b] of bmps) if (Math.abs(i - head) > KEEP) { b.close(); bmps.delete(i); }
+    for (let d = 0; d <= AHEAD && decoding.size < LANES; d++) {
+      decode(head + d * dir);
+      if (d <= BEHIND) decode(head - d * dir);
+    }
+  }
+  function track(f) {
+    const i = Math.round(f);
+    if (i === head) return;
+    dir = i > head ? 1 : -1; head = i;
+    schedule();
+  }
+  function frameAt(i) {
+    if (bmps.has(i)) return bmps.get(i);
+    for (let d = 1; d <= KEEP; d++) { const b = bmps.get(i - d * dir) || bmps.get(i + d * dir); if (b) return b; }
+    return null;
+  }
+
+  // style writes only when a value actually changes (most frames change nothing but the film)
+  const written = new WeakMap();
+  function set(el, prop, v) {
+    let c = written.get(el);
+    if (!c) written.set(el, c = {});
+    if (c[prop] === v) return;
+    c[prop] = v;
+    if (prop.startsWith('--')) el.style.setProperty(prop, v); else el.style[prop] = v;
+  }
+  function fade(el, o, ty) {
+    o = Math.round(o * 1000) / 1000;
+    set(el, 'opacity', String(o));
+    set(el, 'transform', ty ? `translateY(${ty.toFixed(1)}px)` : '');
+    set(el, 'visibility', o < .01 ? 'hidden' : '');
+  }
+
+  let shownEra = -1, eraTimer;
+  const tlLine = document.getElementById('tlLine');
+  function nameEra(i) {
+    const sc = PORTALS[i];
+    tlEra.querySelector('.age').textContent = sc.age;
+    tlEra.querySelector('.nm').textContent = sc.who;
+    tlEra.querySelector('.yr').textContent = sc.where;
+    tlLine.textContent = sc.line;
+  }
+  function setEra(i) {
+    if (i === shownEra) return;
+    const was = shownEra;
+    shownEra = i;
+    tl.classList.toggle('on', i >= 0);
+    tlItems.forEach((li, k) => { li.classList.toggle('past', i >= 0 && k < i); li.classList.toggle('now', k === i); });
+    clearTimeout(eraTimer);
+    if (i < 0) { tlLine.classList.remove('on'); return; }
+    if (was < 0) { nameEra(i); tlEra.classList.remove('swap'); tlLine.classList.add('on'); return; }   // fading in: no swap
+    tlEra.classList.add('swap'); tlLine.classList.remove('on');
+    eraTimer = setTimeout(() => { nameEra(i); tlEra.classList.remove('swap'); tlLine.classList.add('on'); }, 450);
+  }
+
+  let cur = 0, drawn = '', drawnA = null, drawnB = null, journeying = false, lastF = 0, bright = false;
+  function camera() {
+    const { vw, vh } = cam;
+    const p = cur;
+
+    if ((p > 0) !== journeying) { journeying = p > 0; hero.classList.toggle('journeying', journeying); }
+    const copyOut = smooth(ramp(p, .002, START * .9));
+    fade(uiBody, 1 - copyOut, -18 * copyOut);
+    set(hero, '--copy-shade', (1 - copyOut).toFixed(3));
+    fade(ui, 1 - smooth(ramp(p, START * .4, START * 1.5)), 0);
+
+    // the film: frame 0 is the opening film's last frame (the empty portal), so the hand-off is invisible
+    const f = ramp(p, START, END) * (FILM.frames - 1);
+    track(f);
+    const paper = smooth(ramp(p, END - .02, WHITE - .002));
+    // blend to the next frame only when scrolling slowly; at speed it is invisible and costs a second upload
+    const v = Math.abs(f - lastF); lastF = f;
+    const i = Math.floor(f), a = frameAt(i), b = v < .6 && bmps.has(i) && bmps.get(i + 1), k = f - i;
+    const key = [b ? k.toFixed(2) : 0, paper.toFixed(3), vw, vh].join();
+    // no frame decoded yet: keep the last picture (but the final white never waits on a frame)
+    if ((a || paper >= 1) && (key !== drawn || a !== drawnA || b !== drawnB)) {
+      drawn = key; drawnA = a; drawnB = b;
+      const fh = Math.max(vh, vw * 9 / 16), fw = fh * 16 / 9, x = (vw - fw) / 2, y = (vh - fh) / 2;
+      fc.clearRect(0, 0, vw, vh);
+      fc.save();
+      if (a && paper < 1) fc.drawImage(a, x, y, fw, fh);
+      if (a && b && k > .02 && paper < 1) { fc.globalAlpha = k; fc.drawImage(b, x, y, fw, fh); }  // sub-frame blend
+      if (paper > 0) { fc.globalAlpha = paper; fc.fillStyle = PAPER; fc.fillRect(0, 0, vw, vh); }
+      fc.restore();
+    }
+    let era = -1;
+    const n = FILM.eras.length;
+    if (p > START && paper === 0) for (let i = 0; i < n; i++) if (f >= eraAt(i)) era = i;
+    // rail: dots are evenly spaced, so fill piecewise between each era's reveal
+    let fill = 0;
+    for (let i = 0; i < n; i++) if (f >= eraAt(i)) fill = i + (i < n - 1 ? clamp01((f - eraAt(i)) / (eraAt(i + 1) - eraAt(i))) : 0);
+    set(tlFill, 'transform', `scaleX(${(fill / (n - 1)).toFixed(4)})`);
+    if (f > FILM.frames - 30) era = -1;                           // he's walking into the light
+    setEra(era);
+    music.at(p < START ? -1 : f, p >= WHITE - .001);
+    const arrived = paper >= .97;
+    afterEl.classList.toggle('arrived', arrived);
+    soundBtn.classList.toggle('compact', arrived);
+    const isBright = (FILM.bright || []).some(([a, b]) => f >= a - 6 && f <= b + 6);
+    if (isBright !== bright) { bright = isBright; hero.classList.toggle('bright', bright); }
+  }
+
+  // ---------- the opening film ----------
+  // It plays by itself; scrolling does not move the camera until it has finished (or the visitor scrolls
+  // well past the hero, which skips it). It ends on the empty portal, which is exactly film frame 0.
+  const intro = document.getElementById('intro');
+  const SKIP = START * .6;
+  let introDone = false;
+  function finishIntro() {
+    if (introDone) return;
+    introDone = true;
+    let waited = 0;
+    (function swap() {                                           // fade out only once frame 0 is on the canvas
+      if (drawnA || waited > 2500) { hero.classList.add('intro-done'); intro.pause(); kick(); return; }
+      waited += 100; setTimeout(swap, 100);
+    })();
+    kick();
+  }
+  if (!filmOn || reduced) {
+    introDone = true; hero.classList.add('intro-done');
+    intro.removeAttribute('autoplay'); intro.preload = 'none';
+  } else {
+    intro.addEventListener('ended', finishIntro);
+    intro.addEventListener('error', finishIntro, true);
+    const go = () => intro.play().catch(finishIntro);             // autoplay refused: rest on the empty portal
+    intro.readyState >= 2 ? go() : intro.addEventListener('canplay', go, { once: true });
+  }
+  document.getElementById('cue').addEventListener('click', () => {
+    if (!introDone) finishIntro();
+    scrollTo({ top: jTop + jSpan * (START + .02), behavior: 'smooth' });
+  });
+
+  // ---------- music: Stravinsky, The Firebird (1919 suite), VI. Finale ----------
+  // Music can't be scrubbed like frames, so it plays at its own pace, but it is pinned to the film's key
+  // moments: when the scroll reaches one, the music cuts forward to its accent at that instant, however fast
+  // you scroll. Hits only move the music forward, so it never replays a passage; linger and it plays on.
+  // [part, frame within that part, music seconds]; part −1 is the flight through the portal, 0… are the scenes
+  const HITS = [
+    [-1, 58, 29.0],    // crossing the portal's glowing threshold: the first big accent
+    [0, 30, 38.6],     // Caesar appears in the blazing doorway
+    [0, 120, 57.7],    // Caesar strides down the aisle: the full theme
+    [1, 62, 64.7],     // the Renaissance arch opens
+    [1, 110, 78.7],    // Lorenzo studies the drawing
+    [2, 55, 84.0],     // the drawing becomes the Los Alamos blackboard
+    [2, 143, 103.3],   // the Trinity flash and fireball: the biggest surge in the piece (1:43.5)
+    [3, 20, 110.6],    // the rocket emerges from the white
+    [3, 88, 124.8],    // liftoff (2:05)
+    [4, 110, 171.2],   // the traveller walks into the light (2:51)
+  ];
+  const END_HIT = 192.4;                     // the end screen: the grand pause, then the final chords (3:12.5)
+  const HUSH = [[94.6, 102.9]];              // the near-silent passage before the surge: never dwell in it
+  const music = (() => {
+    const btn = document.getElementById('sound'), lbl = btn.querySelector('.lbl');
+    // sound is on by default (a visitor's choice to turn it off is remembered); `playing` is whether the
+    // browser has actually let it start yet
+    let on = true;
+    try { on = localStorage.getItem('origin-sound') !== 'off'; } catch (e) {}
+    let ctx, master, decks = [], live = 0, playing = false, lastF = -1, lastEnd = false, hitTimer = 0, wanted = -1;
+    const hits = () => HITS.map(([part, at, t]) => [(part < 0 ? 0 : FILM.eras[part].start) + at, t]);
+    function deck() {
+      const a = new Audio('film/audio/firebird-finale.m4a');
+      a.preload = 'auto';
+      const g = ctx.createGain(); g.gain.value = 0;
+      ctx.createMediaElementSource(a).connect(g).connect(master);
+      return { a, g };
+    }
+    const ramp = (g, v, t) => { g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setTargetAtTime(v, ctx.currentTime, t / 3); };
+    const now = () => decks[live].a.currentTime;
+    const ended = () => decks[live].a.ended || decks[live].a.paused;
+    function cut(t, punch) {
+      const cur = decks[live], next = decks[1 - live];
+      next.a.currentTime = t;
+      next.a.play().catch(() => {});
+      ramp(next.g, 1, punch ? .25 : .9); ramp(cur.g, 0, punch ? .7 : 1.1);
+      setTimeout(() => { if (decks[live] !== cur) cur.a.pause(); }, 1300);
+      live = 1 - live;
+    }
+    // where the music belongs for a given place in the film: the latest hit at or before it
+    const placeFor = (f, end) => end ? END_HIT : p0(f);
+    function p0(f) { let t = 0; for (const [hf, ht] of hits()) if (f >= hf) t = ht; return t; }
+    function hitLater(t) {                      // debounce: a fast scroll across several hits makes one cut
+      wanted = Math.max(wanted, t);
+      clearTimeout(hitTimer);
+      hitTimer = setTimeout(() => { if (playing && (now() < wanted - .4 || ended())) cut(wanted, true); wanted = -1; }, 90);
+    }
+    setInterval(() => {                         // skip the hush if the music drifts into it on its own
+      if (!playing) return;
+      const t = now();
+      for (const [a, b] of HUSH) if (t > a && t < b) cut(b, false);
+    }, 250);
+    function start() {
+      if (!ctx) {
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        master = ctx.createGain(); master.gain.value = .45; master.connect(ctx.destination);
+        decks = [deck(), deck()];
+      }
+      ctx.resume();
+      const d = decks[live], want = lastF < 0 ? 0 : placeFor(lastF, lastEnd);
+      if (d.a.ended || d.a.currentTime < want - .4 || d.a.currentTime === 0) d.a.currentTime = want;
+      d.a.play().then(() => { if (!on) return; ramp(d.g, 1, .8); setPlaying(true); }, () => setPlaying(false));
+    }
+    function stop() {
+      setPlaying(false);
+      decks.forEach(d => ramp(d.g, 0, .5));
+      setTimeout(() => { if (!on) decks.forEach(d => d.a.pause()); }, 700);
+    }
+    function setPlaying(v) { playing = v; btn.classList.toggle('playing', v); }
+    function render() {
+      btn.classList.toggle('on', on);
+      btn.setAttribute('aria-pressed', on);
+      lbl.textContent = on ? 'Sound on' : 'Sound off';
+    }
+    btn.addEventListener('click', () => {
+      if (on && !playing) { start(); return; }      // on, but the browser hadn't let it start yet
+      on = !on;
+      try { localStorage.setItem('origin-sound', on ? 'on' : 'off'); } catch (e) {}
+      render();
+      on ? start() : stop();
+    });
+    // Browsers only allow sound after a first click, tap or key press (scrolling doesn't count), so while
+    // sound is on but blocked, the visitor's first such gesture anywhere starts it.
+    const unlock = e => { if (on && !playing && !btn.contains(e.target)) start(); };
+    ['pointerdown', 'keydown', 'touchend'].forEach(t => addEventListener(t, unlock, { capture: true, passive: true }));
+    render();
+    if (on) start();                                // starts at once wherever the browser allows it
+    return {
+      // called every camera frame with the film position; f < 0 while the hero is still up
+      at(f, end) {
+        const prev = lastF, prevEnd = lastEnd;
+        lastF = f; lastEnd = end;
+        if (!playing || f === prev && end === prevEnd) return;
+        if (end && !prevEnd) { if (now() < END_HIT - .4 || ended()) hitLater(END_HIT); return; }
+        if (f > prev) {                          // moving forward: fire the last hit we crossed
+          let t = -1;
+          for (const [hf, ht] of hits()) if (prev < hf && f >= hf) t = ht;
+          if (t >= 0) hitLater(t);
+        } else if (ended() && f >= 0) hitLater(placeFor(f, end));   // music ran out and they scrolled back
+      },
+    };
+  })();
+
+  const soundBtn = document.getElementById('sound');
+  new IntersectionObserver(([e]) => soundBtn.classList.toggle('lift', e.isIntersecting)).observe(document.getElementById('aFoot'));
+  if (!filmOn) new IntersectionObserver(([e]) => soundBtn.classList.toggle('compact', e.isIntersecting), { rootMargin: '0px 0px -40% 0px' })
+    .observe(document.getElementById('after'));
+
+  // ---------- layout & loop ----------
+  function layout() {
+    cam = { vw: hero.clientWidth, vh: hero.clientHeight };
+    if (filmOn) { measure(); sizeFilm(); drawn = ''; camera(); }
+  }
+  // journey geometry is measured on layout, so a scroll tick never forces a layout read
+  let target = 0, raf = 0, last = 0, jTop = 0, jSpan = 1;
+  const afterEl = document.getElementById('after');
+  function measure() {
+    const hh = hero.offsetHeight;
+    jTop = journey.offsetTop; jSpan = Math.max(1, journey.offsetHeight - hh);
+    // the page after the film overlaps the pinned hero's final screen: its top edge reaches the top of the
+    // screen exactly as the frame turns fully white, and it fades in there, so there is no scrolling it up
+    afterEl.style.marginTop = -hh + 'px';
+    WHITE = 1;
+    END = WHITE - .012;                                    // last film frame
+  }
+  const progress = () => clamp01((window.scrollY - jTop) / jSpan);
+  function tick(now) {
+    raf = 0;
+    const dt = Math.min(64, last ? now - last : 16); last = now;
+    target = progress();
+    if (!introDone && target > SKIP) finishIntro();               // scrolled well past the hero: skip the film
+    const want = introDone ? target : 0;                           // the camera holds while the film plays
+    cur += (want - cur) * (1 - Math.exp(-dt / 55));               // a touch of dolly inertia
+    if (Math.abs(want - cur) < 2e-5) cur = want;
+    camera();
+    if (cur !== want) raf = requestAnimationFrame(tick); else last = 0;
+  }
+  function kick() { if (!raf) raf = requestAnimationFrame(tick); }
+
+  if (filmOn) addEventListener('scroll', kick, { passive: true });
+  let rt;
+  new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(layout, 120); }).observe(hero);
+  requestAnimationFrame(() => {
+    if (filmOn) { measure(); target = progress(); if (target > SKIP) finishIntro(); cur = introDone ? target : 0; loadFrames(); }
+    layout();
+    document.body.classList.add('loaded');
+  });
+})();
+</script>
+</body>
+</html>
