@@ -601,7 +601,6 @@
     set(tlFill, 'transform', `scaleX(${(fill / (n - 1)).toFixed(4)})`);
     if (f > FILM.frames - 30) era = -1;                           // he's walking into the light
     setEra(era);
-    music.at(p < START ? -1 : f, p >= WHITE - .001);
     const arrived = paper >= .97;
     afterEl.classList.toggle('arrived', arrived);
     soundBtn.classList.toggle('compact', arrived);
@@ -640,78 +639,32 @@
   });
 
   // ---------- music: Stravinsky, The Firebird (1919 suite), VI. Finale ----------
-  // Music can't be scrubbed like frames, so it plays at its own pace, but it is pinned to the film's key
-  // moments: when the scroll reaches one, the music cuts forward to its accent at that instant, however fast
-  // you scroll. Hits only move the music forward, so it never replays a passage; linger and it plays on.
-  // [part, frame within that part, music seconds]; part −1 is the flight through the portal, 0… are the scenes
-  const HITS = [
-    [-1, 58, 29.0],    // crossing the portal's glowing threshold: the first big accent
-    [0, 30, 38.6],     // Caesar appears in the blazing doorway
-    [0, 120, 57.7],    // Caesar strides down the aisle: the full theme
-    [1, 62, 64.7],     // the Renaissance arch opens
-    [1, 110, 78.7],    // Lorenzo studies the drawing
-    [2, 55, 84.0],     // the drawing becomes the Los Alamos blackboard
-    [2, 143, 103.3],   // the Trinity flash and fireball: the biggest surge in the piece (1:43.5)
-    [3, 20, 110.6],    // the rocket emerges from the white
-    [3, 88, 124.8],    // liftoff (2:05)
-    [4, 110, 171.2],   // the traveller walks into the light (2:51)
-  ];
-  const END_HIT = 192.4;                     // the end screen: the grand pause, then the final chords (3:12.5)
-  const HUSH = [[94.6, 102.9]];              // the near-silent passage before the surge: never dwell in it
-  const music = (() => {
+  // It plays straight through at its own pace (and loops), whatever the scroll does: no cuts at the milestones.
+  (() => {
     const btn = document.getElementById('sound'), lbl = btn.querySelector('.lbl');
     // sound is on by default (a visitor's choice to turn it off is remembered); `playing` is whether the
     // browser has actually let it start yet
     let on = true;
     try { on = localStorage.getItem('origin-sound') !== 'off'; } catch (e) {}
-    let ctx, master, decks = [], live = 0, playing = false, lastF = -1, lastEnd = false, hitTimer = 0, wanted = -1;
-    const hits = () => HITS.map(([part, at, t]) => [(part < 0 ? 0 : FILM.eras[part].start) + at, t]);
-    function deck() {
-      const a = new Audio('film/audio/firebird-finale.m4a');
-      a.preload = 'auto';
-      const g = ctx.createGain(); g.gain.value = 0;
-      ctx.createMediaElementSource(a).connect(g).connect(master);
-      return { a, g };
-    }
-    const ramp = (g, v, t) => { g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setTargetAtTime(v, ctx.currentTime, t / 3); };
-    const now = () => decks[live].a.currentTime;
-    const ended = () => decks[live].a.ended || decks[live].a.paused;
-    function cut(t, punch) {
-      const cur = decks[live], next = decks[1 - live];
-      next.a.currentTime = t;
-      next.a.play().catch(() => {});
-      ramp(next.g, 1, punch ? .25 : .9); ramp(cur.g, 0, punch ? .7 : 1.1);
-      setTimeout(() => { if (decks[live] !== cur) cur.a.pause(); }, 1300);
-      live = 1 - live;
-    }
-    // where the music belongs for a given place in the film: the latest hit at or before it
-    const placeFor = (f, end) => end ? END_HIT : p0(f);
-    function p0(f) { let t = 0; for (const [hf, ht] of hits()) if (f >= hf) t = ht; return t; }
-    function hitLater(t) {                      // debounce: a fast scroll across several hits makes one cut
-      wanted = Math.max(wanted, t);
-      clearTimeout(hitTimer);
-      hitTimer = setTimeout(() => { if (playing && (now() < wanted - .4 || ended())) cut(wanted, true); wanted = -1; }, 90);
-    }
-    setInterval(() => {                         // skip the hush if the music drifts into it on its own
-      if (!playing) return;
-      const t = now();
-      for (const [a, b] of HUSH) if (t > a && t < b) cut(b, false);
-    }, 250);
+    let ctx, a, g, playing = false;
+    const ramp = (v, t) => { g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setTargetAtTime(v, ctx.currentTime, t / 3); };
     function start() {
       if (!ctx) {
         ctx = new (window.AudioContext || window.webkitAudioContext)();
-        master = ctx.createGain(); master.gain.value = .45; master.connect(ctx.destination);
-        decks = [deck(), deck()];
+        a = new Audio('film/audio/firebird-finale.m4a');
+        a.preload = 'auto'; a.loop = true;
+        g = ctx.createGain(); g.gain.value = 0;
+        const master = ctx.createGain(); master.gain.value = .45;
+        ctx.createMediaElementSource(a).connect(g).connect(master).connect(ctx.destination);
       }
       ctx.resume();
-      const d = decks[live], want = lastF < 0 ? 0 : placeFor(lastF, lastEnd);
-      if (d.a.ended || d.a.currentTime < want - .4 || d.a.currentTime === 0) d.a.currentTime = want;
-      d.a.play().then(() => { if (!on) return; ramp(d.g, 1, .8); setPlaying(true); }, () => setPlaying(false));
+      a.play().then(() => { if (!on) return; ramp(1, .8); setPlaying(true); }, () => setPlaying(false));
     }
     function stop() {
       setPlaying(false);
-      decks.forEach(d => ramp(d.g, 0, .5));
-      setTimeout(() => { if (!on) decks.forEach(d => d.a.pause()); }, 700);
+      if (!ctx) return;
+      ramp(0, .5);
+      setTimeout(() => { if (!on) a.pause(); }, 700);
     }
     function setPlaying(v) { playing = v; btn.classList.toggle('playing', v); }
     function render() {
@@ -732,20 +685,6 @@
     ['pointerdown', 'keydown', 'touchend'].forEach(t => addEventListener(t, unlock, { capture: true, passive: true }));
     render();
     if (on) start();                                // starts at once wherever the browser allows it
-    return {
-      // called every camera frame with the film position; f < 0 while the hero is still up
-      at(f, end) {
-        const prev = lastF, prevEnd = lastEnd;
-        lastF = f; lastEnd = end;
-        if (!playing || f === prev && end === prevEnd) return;
-        if (end && !prevEnd) { if (now() < END_HIT - .4 || ended()) hitLater(END_HIT); return; }
-        if (f > prev) {                          // moving forward: fire the last hit we crossed
-          let t = -1;
-          for (const [hf, ht] of hits()) if (prev < hf && f >= hf) t = ht;
-          if (t >= 0) hitLater(t);
-        } else if (ended() && f >= 0) hitLater(placeFor(f, end));   // music ran out and they scrolled back
-      },
-    };
   })();
 
   const soundBtn = document.getElementById('sound');
