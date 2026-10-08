@@ -1,6 +1,6 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "axis", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "8137"], "port": 8137 }
+    { "name": "axis", "runtimeExecutable": "python3", "runtimeArgs": ["tools/serve.py", "8137"], "port": 8137 }
   ]
 }
