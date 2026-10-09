@@ -57,48 +57,17 @@
   .intro-done .intro { opacity: 0; visibility: hidden; }
   .film { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; display: block; pointer-events: none; }
 
-  /* ---------- life in the empty portal (after the opening film): ships cross the sky, mist rolls through ---------- */
-  /* .amb is laid over the film frame exactly (the same cover box the canvas draws), so % here are % of the frame */
+  /* ---------- life in the empty portal (after the opening film): a looping film of ships crossing the sky and ---------- */
+  /* mist rolling through the clouds. It starts and ends on the empty-portal frame, so it loops and hands off invisibly. */
+  /* .amb is laid over the film frame exactly (the same cover box the canvas draws). */
   .amb {
     position: absolute; z-index: 2; pointer-events: none; overflow: hidden;
-    opacity: 0; visibility: hidden; transition: opacity 2.4s ease .2s, visibility 0s linear 2.6s;
+    opacity: 0; visibility: hidden; transition: opacity .8s ease, visibility 0s linear .8s;
   }
-  .intro-done .amb { opacity: 1; visibility: visible; transition: opacity 2.4s ease .2s; }
+  .intro-done .amb { opacity: 1; visibility: visible; transition: opacity .8s ease; }
   .amb-in, .amb-off { position: absolute; inset: 0; }
   .amb-in.amb-off { display: none; }                              /* gone (and not animating) once the journey starts */
-  /* the sky seen through the portal: ships pass behind the pillars, so they are clipped to the opening */
-  .amb-sky {
-    position: absolute; left: 42.4%; width: 36%; top: 5%; height: 25%; overflow: hidden;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
-            mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
-  }
-  .ship { position: absolute; left: 0; width: 100%; animation: fly-l linear infinite; will-change: transform; }
-  .ship.r { animation-name: fly-r; }
-  .ship i { display: block; width: var(--w); animation: bob 7s ease-in-out infinite alternate; }
-  .ship svg { display: block; width: 100%; aspect-ratio: 100 / 26; }
-  @keyframes fly-l { from { transform: translateX(104%); } to { transform: translateX(-16%); } }
-  @keyframes fly-r { from { transform: translateX(-16%); } to { transform: translateX(104%); } }
-  @keyframes bob { from { transform: translateY(-14%); } to { transform: translateY(14%); } }
-  /* depth: the farther a ship, the smaller, slower and hazier */
-  .ship.s1 { top: 28%; --w: 11%; animation-duration: 64s; animation-delay: -22s; }
-  .ship.s2 { top: 62%; --w: 5.5%; animation-duration: 118s; animation-delay: -70s; opacity: .62; filter: blur(.4px); }
-  .ship.s3 { top: 10%; --w: 8%; animation-duration: 86s; animation-delay: -8s; opacity: .85; }
-  .ship.s4 { top: 80%; --w: 3.6%; animation-duration: 140s; animation-delay: -100s; opacity: .5; filter: blur(.5px); }
-  .ship.s2 i { animation-duration: 9s; } .ship.s3 i { animation-duration: 6s; animation-delay: -3s; }
-  /* mist: soft cloud texture (made in the page, tileable) drifting in layers, gently thickening and thinning */
-  .mist { position: absolute; left: 0; width: 100%; animation: breathe 9s ease-in-out infinite alternate; }
-  .mist b {
-    position: absolute; inset: 0; width: 200%; display: block;
-    background-repeat: repeat-x; background-size: 50% 100%;
-    animation: drift-l linear infinite; will-change: transform;
-  }
-  .mist.r b { animation-name: drift-r; }
-  @keyframes drift-l { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  @keyframes drift-r { from { transform: translateX(-50%); } to { transform: translateX(0); } }
-  @keyframes breathe { from { opacity: var(--lo); } to { opacity: var(--hi); } }
-  .mist.m1 { top: 46%; height: 36%; --lo: .6; --hi: 1; } .mist.m1 b { animation-duration: 80s; }
-  .mist.m2 { top: 60%; height: 24%; --lo: .5; --hi: .95; animation-duration: 11s; animation-delay: -4s; } .mist.m2 b { animation-duration: 55s; }
-  .mist.m3 { top: 14%; height: 34%; --lo: .2; --hi: .45; animation-duration: 15s; } .mist.m3 b { animation-duration: 130s; }
+  .amb video { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; }
   /* a whisper of contrast behind the headline, nothing more */
   .shade {
     position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: var(--copy-shade, 1);
@@ -375,19 +344,7 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="oc-mark" viewBox="-476 0 952 574">
   <polygon points="-476,574 -98,563.5 -93,.5 -57,39 -53,574"/><polygon points="476,574 98,563.5 93,.5 57,39 53,574"/>
 </symbol>
-<!-- a sky ship like the ones over the city: a long flat hull with decks on top, backlit by the low sun -->
-<symbol id="oc-ship" viewBox="0 0 100 26">
-  <defs><linearGradient id="hull" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#f6e4cc"/><stop offset=".45" stop-color="#c4a68c"/><stop offset="1" stop-color="#76604f"/>
-  </linearGradient></defs>
-  <g fill="url(#hull)">
-    <path d="M1 13.2C12 10.6 32 9.6 50 9.6s38 1 49 3.6c-9 2.7-28 4.6-49 4.6S10 15.9 1 13.2Z"/>
-    <path d="M33 10l2.4-4.2h8.2l1.2-2.6h7.4l1.2 2.6h7.6L63.4 10Z"/>
-    <path d="M68 10.4l1.8-3h6.4l2 3.2Z"/><path d="M21 11l1.4-2h4.8l1.2 1.8Z"/>
-    <path d="M37 17.6l4 4.2h18l4-4.4Z"/><path d="M23 16.4l2 3.4h4.6l1.4-3Z"/><path d="M69 17l1.4 3h4.6l2-3.6Z"/>
-  </g>
-  <path d="M3 13c11-2.4 30-3.3 47-3.3S86 10.6 97 13" fill="none" stroke="#fff4e2" stroke-width=".7" opacity=".8"/>
-</symbol></svg>
+</svg>
 <div class="journey" id="journey">
 <section class="hero" id="hero">
   <canvas class="film" id="film" aria-hidden="true"></canvas>
@@ -395,15 +352,7 @@
     <source src="film/intro/intro.mp4" type="video/mp4">
   </video>
   <div class="amb" id="amb" aria-hidden="true"><div class="amb-in" id="ambIn">
-    <div class="mist m3 r"><b></b></div>
-    <div class="amb-sky">
-      <div class="ship s4"><i><svg><use href="#oc-ship"/></svg></i></div>
-      <div class="ship s2 r"><i><svg><use href="#oc-ship"/></svg></i></div>
-      <div class="ship s3 r"><i><svg><use href="#oc-ship"/></svg></i></div>
-      <div class="ship s1"><i><svg><use href="#oc-ship"/></svg></i></div>
-    </div>
-    <div class="mist m1"><b></b></div>
-    <div class="mist m2 r"><b></b></div>
+    <video id="loop" muted playsinline loop preload="none" src="film/intro/ambient.mp4"></video>
   </div></div>
   <div class="shade" aria-hidden="true"></div>
   <div class="tl" id="tl">
@@ -663,7 +612,7 @@
     fade(ui, 1 - smooth(ramp(p, START * .4, START * 1.5)), 0);
     fade(ambIn, 1 - copyOut, 0);
     const ambOff = copyOut >= .999;
-    if (ambOff !== ambIn.classList.contains('amb-off')) ambIn.classList.toggle('amb-off', ambOff);
+    if (ambOff !== ambIn.classList.contains('amb-off')) { ambIn.classList.toggle('amb-off', ambOff); playLoop(); }
 
     // the film: frame 0 is the opening film's last frame (the empty portal), so the hand-off is invisible
     const f = ramp(p, START, END) * (FILM.frames - 1);
@@ -712,7 +661,7 @@
     introDone = true;
     let waited = 0;
     (function swap() {                                           // fade out only once frame 0 is on the canvas
-      if (drawnA || waited > 2500) { hero.classList.add('intro-done'); intro.pause(); kick(); return; }
+      if (drawnA || waited > 2500) { hero.classList.add('intro-done'); intro.pause(); playLoop(); kick(); return; }
       waited += 100; setTimeout(swap, 100);
     })();
     kick();
@@ -722,6 +671,7 @@
     intro.removeAttribute('autoplay'); intro.preload = 'none';
   } else {
     intro.addEventListener('ended', finishIntro);
+    intro.addEventListener('playing', () => { loop.preload = 'auto'; loop.load(); }, { once: true });   // ready for the hand-off
     intro.addEventListener('error', finishIntro, true);
     const go = () => intro.play().catch(finishIntro);             // autoplay refused: rest on the empty portal
     intro.readyState >= 2 ? go() : intro.addEventListener('canplay', go, { once: true });
@@ -826,47 +776,19 @@
     .observe(document.getElementById('after'));
 
   // ---------- life in the empty portal ----------
-  const amb = document.getElementById('amb'), ambIn = document.getElementById('ambIn');
+  const amb = document.getElementById('amb'), ambIn = document.getElementById('ambIn'), loop = document.getElementById('loop');
+  // the loop plays once the opening film has ended, and only while the hero is up (paused once the journey starts)
+  function playLoop() {
+    if (reduced) return;
+    const want = hero.classList.contains('intro-done') && !ambIn.classList.contains('amb-off');
+    if (want && loop.paused) loop.play().catch(() => {});
+    else if (!want && !loop.paused) loop.pause();
+  }
+  if (!filmOn && !reduced) { loop.preload = 'auto'; playLoop(); }       // no scroll film: the loop simply plays
   function placeAmb() {                                    // the same cover box the film frame is drawn into
     const { vw, vh } = cam, fh = Math.max(vh, vw * 9 / 16), fw = fh * 16 / 9;
     Object.assign(amb.style, { width: fw + 'px', height: fh + 'px', left: (vw - fw) / 2 + 'px', top: (vh - fh) / 2 + 'px' });
   }
-  // Mist texture: fractal noise that wraps left↔right (so a layer can drift forever), shaped into soft wisps
-  // with feathered top and bottom edges. Small and blurry by design; the layers scale it up.
-  function mistTexture(W, H, seed, cells) {
-    let t = seed;
-    const rnd = () => ((t = (t * 1664525 + 1013904223) >>> 0) / 4294967296);
-    const c = document.createElement('canvas'); c.width = W; c.height = H;
-    const g = c.getContext('2d'), img = g.createImageData(W, H), px = img.data, n = new Float32Array(W * H);
-    for (let o = 0, amp = .5; o < 5; o++, amp /= 2) {
-      const cx = cells << o, cy = Math.ceil(cx * H / W) + 1, grid = new Float32Array(cx * (cy + 1));
-      for (let k = 0; k < grid.length; k++) grid[k] = rnd();
-      const at = (x, y) => grid[y * cx + (x % cx)];
-      for (let y = 0; y < H; y++) {
-        const fy = y / W * cx, y0 = fy | 0, ty = fy - y0, sy = ty * ty * (3 - 2 * ty);
-        for (let x = 0; x < W; x++) {
-          const fx = x / W * cx, x0 = fx | 0, tx = fx - x0, sx = tx * tx * (3 - 2 * tx);
-          const a = at(x0, y0) + (at(x0 + 1, y0) - at(x0, y0)) * sx, b = at(x0, y0 + 1) + (at(x0 + 1, y0 + 1) - at(x0, y0 + 1)) * sx;
-          n[y * W + x] += (a + (b - a) * sy) * amp;
-        }
-      }
-    }
-    for (let y = 0; y < H; y++) {
-      const env = Math.pow(Math.sin(Math.PI * (y + .5) / H), 1.6);
-      for (let x = 0; x < W; x++) {
-        const v = Math.min(1, Math.max(0, (n[y * W + x] - .3) / .38)), i = (y * W + x) * 4;
-        px[i] = 255; px[i + 1] = 250; px[i + 2] = 242; px[i + 3] = v * v * (3 - 2 * v) * env * 255;
-      }
-    }
-    g.putImageData(img, 0, 0);
-    return c;
-  }
-  function makeMist() {
-    [['.m1 b', 7, 4], ['.m2 b', 23, 6], ['.m3 b', 41, 3]].forEach(([sel, seed, cells]) => {
-      mistTexture(384, 112, seed, cells).toBlob(b => { amb.querySelector(sel).style.backgroundImage = `url(${URL.createObjectURL(b)})`; });
-    });
-  }
-  if (!reduced) (window.requestIdleCallback || setTimeout)(makeMist);
 
   // ---------- layout & loop ----------
   function layout() {

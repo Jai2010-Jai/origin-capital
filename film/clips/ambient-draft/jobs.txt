@@ -1,0 +1,43 @@
+Ambient portal loop -- 480p DRAFTS (do not finalize/upscale until user accepts)
+Date: 2026-10-10
+Start frame AND end frame: film/intro/end.webp (converted to PNG), Higgsfield media_id af9bd0e9-7535-4fe9-9f8d-465fa12450e7
+
+Draft A  ambient-480p-a.mp4
+  model: seedance_2_5  mode=omni_reference  draft=true  resolution=480p  duration=10  aspect_ratio=16:9  generate_audio=false
+  medias: start_image=af9bd0e9-..., end_image=af9bd0e9-...
+  job_id: 9aedd3e3-4441-40dd-9cd7-9a9e595e362c
+  finalize later: generate_video seedance_2_5 with draft_job_id=9aedd3e3-4441-40dd-9cd7-9a9e595e362c (1080p, within 7 days of 2026-10-10)
+
+Draft B  ambient-480p-b.mp4
+  model: wan3_0  resolution=480p  duration=10  aspect_ratio=16:9  generate_audio=false
+  medias: start_image=af9bd0e9-..., end_image=af9bd0e9-...
+  job_id: b0a7f50f-f916-4779-a00c-250907c79548
+  (wan3_0 has no draft/finalize mode: a 1080p version means a new generation at resolution=1080p, same prompt/inputs; it will not be identical)
+
+Prompt (both):
+Locked-off static camera, a single continuous shot with no camera movement, no zoom, no pan. The exact same composition and lighting as the reference frame: two tall glowing white stone pillars framing a giant portal, a reflective marble floor in the foreground, a futuristic city in a green valley with a lake, mountains and a low golden sun beyond. The scene is quietly alive: several flat, wide sky ships with warm backlit hulls glide slowly across the sky inside the portal at different distances, some small and far near the mountains, one larger and closer, drifting gracefully and smoothly. Soft clouds drift slowly. Wisps of mist continually form and roll gently through the clouds and along the base of the portal, curling and dissolving. Calm, majestic, slow, cinematic, serene golden hour. The pillars and the marble floor stay perfectly still and unchanged. No people, no characters, nothing new in the foreground, no text.
+
+Quoted cost: A 30 credits, B 10 credits. Balance before: 1499.25
+
+Credits: balance before 1499.25, after 1459.25 -> 40 credits spent (A 30 + B 10). Nothing finalized/upscaled.
+
+Results (checked with ffmpeg frame extraction, 2026-10-10):
+A  854x480, 24fps, 241 frames, 10.04s, HEVC Main10 (yuv420p10le), no audio.
+   Loops on itself (first vs last frame PSNR 38.6 dB). BUT seedance omni_reference treated end.webp as a
+   reference, not an exact keyframe: the view inside the portal is re-framed (city/valley noticeably larger,
+   slightly hazier/darker) vs end.webp (PSNR vs end.webp 19.4 dB) -> the hand-off to/from end.webp would jump.
+   Motion is minimal: the existing big ship barely moves, one tiny far ship drifts, faint cloud drift; no
+   visible mist forming. Pillars/floor stable. No people or artifacts.
+B  854x480, 30fps, 300 frames, 10.0s, H.264 yuv420p, no audio.
+   Matches end.webp at both ends (PSNR vs end.webp 33.5 dB first / 33.4 dB last; first vs last 41.2 dB).
+   Several ships of the same flat warm-backlit style cross at different depths (one larger, closer, with a
+   faint contrail); clouds drift; mist wisps. Activity peaks ~2-5s, scene settles back to the still from ~7.5s
+   (so each 10s loop has ~1.5s quiet at start and ~2.5s quiet at the end).
+   Artifacts: translucent white curling "ribbon" streaks over the clouds left of the left pillar and right of
+   the right pillar (~3-6s) and a thin arc near the right pillar; 1-2 small ships fly in the open sky outside
+   the portal (right of the right pillar). Pillars/floor/composition locked; no people.
+
+Draft C  ambient-480p-c.mp4  wan3_0 480p 10s, start=end=end.webp, prompt: ships only inside the portal  job ac242a79-de7f-4ff1-9518-5694384c0404
+Draft D  ambient-480p-d.mp4  same, variant 2  job 0e17a2c5-2754-4797-9c3c-31edb7186a4d
+1080p of B: job f5069ab8-39e6-4c9d-a73a-05dc73853664 -> film/clips/ambient/ambient-1080p.mp4 (35 credits)
+1080p of D: job 96861bc6-aae5-4bf9-b446-47d9c2c816e0 -> film/clips/ambient/ambient-d-1080p.mp4 (35 credits)
