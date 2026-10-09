@@ -43,7 +43,10 @@
   a { color: inherit; text-decoration: none; }
 
   .hero {
-    position: relative; height: 100vh; height: 100dvh; min-height: 560px;   /* dvh: tracks the phone's toolbar, so no strip opens below */
+    position: relative; height: 100vh; height: 100lvh; min-height: 560px;
+    /* lvh: the full screen with the phone's toolbar hidden. It never changes as the toolbar slides in and out,
+       so nothing re-lays out mid-scroll; --tb lifts the bottom-anchored bits clear of the toolbar when it shows */
+    --tb: 0px;
     overflow: hidden; isolation: isolate;
     background: #ece4d6 url(film/intro/end.webp) center / cover no-repeat;   /* the empty portal, until frames decode */
   }
@@ -64,6 +67,7 @@
     position: absolute; z-index: 2; pointer-events: none; overflow: hidden;
     opacity: 0; visibility: hidden; transition: opacity .8s ease, visibility 0s linear .8s;
   }
+  @supports (height: 100lvh) { .hero { --tb: calc(100lvh - 100svh); } }
   .intro-done .amb { opacity: 1; visibility: visible; transition: opacity .8s ease; }
   .amb-in, .amb-off { position: absolute; inset: 0; }
   .amb-in.amb-off { display: none; }                              /* gone (and not animating) once the journey starts */
@@ -108,13 +112,13 @@
   .explore:hover i { width: 48px; }
   .explore svg { width: 13px; height: 13px; }
   .years {
-    position: absolute; left: var(--gutter); bottom: clamp(26px, 4.6vh, 50px); margin: 0; padding: 0; list-style: none;
+    position: absolute; left: var(--gutter); bottom: calc(clamp(26px, 4.6vh, 50px) + var(--tb)); margin: 0; padding: 0; list-style: none;
     display: flex; align-items: center; gap: 14px; font: 500 10px/1 var(--sans); letter-spacing: .18em; color: var(--ink);
   }
   .years li { display: flex; align-items: center; gap: 14px; }
   .years li + li::before { content: ""; width: clamp(22px, 3vw, 46px); height: 1px; background: rgba(27, 25, 22, .45); }
   .cue {
-    position: absolute; right: var(--gutter); bottom: clamp(24px, 4.4vh, 48px);
+    position: absolute; right: var(--gutter); bottom: calc(clamp(24px, 4.4vh, 48px) + var(--tb));
     display: grid; justify-items: center; gap: 10px; font: 400 11px/1 var(--sans); letter-spacing: .04em; color: var(--ink);
     background: none; border: 0; padding: 0; cursor: pointer;
   }
@@ -170,7 +174,7 @@
   .tl-era .yr { font: 500 11px/1 var(--sans); letter-spacing: .3em; margin-right: -.3em; text-transform: uppercase; color: rgba(238, 232, 221, .82); }
   /* the scene's line, set low like a subtitle */
   .tl-line {
-    position: absolute; z-index: 3; left: 50%; bottom: clamp(30px, 7vh, 72px); transform: translateX(-50%);
+    position: absolute; z-index: 3; left: 50%; bottom: calc(clamp(30px, 7vh, 72px) + var(--tb)); transform: translateX(-50%);
     opacity: 0; pointer-events: none;
     width: min(90vw, 760px); margin: 0; text-align: center; white-space: pre-line;
     font: italic 400 clamp(20px, 1.9vw, 32px)/1.3 var(--serif); color: var(--ivory);
@@ -514,8 +518,17 @@
 
   // Frames: every JPEG is fetched once and kept compressed (~13 MB). Only a window around the
   // playhead is decoded, off the main thread, into ImageBitmaps, so a draw never waits on a decode.
+  // On a narrow (phone) screen only a slice of each frame is ever visible, so only that slice is decoded, at
+  // no more pixels than the canvas shows: ~4× less memory on a phone, which keeps mobile browsers from reloading.
   const srcs = [], bmps = new Map(), decoding = new Set();
-  const AHEAD = 20, BEHIND = 6, KEEP = 24, LANES = 4;           // ~27 decoded 1080p frames live (~225 MB)
+  const AHEAD = 20, BEHIND = 6, KEEP = 24, LANES = 4;           // ~27 decoded frames live (≤ ~225 MB on a desktop)
+  let slice = { sx: 0, sw: 1920, rw: 1920, rh: 1080 };
+  function sliceFilm() {
+    const { vw, vh } = cam, fw = Math.max(vw, vh * 16 / 9), W = FILM.w, H = FILM.h;
+    const sw = Math.min(W, Math.ceil(W * vw / fw) + 8), sx = Math.max(0, Math.floor((W - sw) / 2));
+    const k = Math.min(1, (fw * fd) / W);                         // bitmap pixels per source pixel
+    slice = { sx, sw, rw: Math.max(1, Math.round(sw * k)), rh: Math.max(1, Math.round(H * k)) };
+  }
   let head = 0, dir = 1;
   const fetchFrame = i => location.protocol === 'file:'
     ? new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = FILM.src(i); })
@@ -532,18 +545,24 @@
     for (let k = 0; k < 6; k++) pump();
   }
   function decode(i) {
-    if (i < 0 || i >= FILM.frames || !srcs[i] || bmps.has(i) || decoding.has(i) || decoding.size >= LANES) return;
+    if (i < 0 || i >= FILM.frames || !srcs[i] || (bmps.has(i) && bmps.get(i).sl === slice) || decoding.has(i) || decoding.size >= LANES) return;
     decoding.add(i);
-    const src = srcs[i];
-    (src instanceof Blob ? createImageBitmap(src) : src.decode().then(() => createImageBitmap(src))).then(b => {
+    const src = srcs[i], sl = slice;
+    let g = sl;                                                    // where in the frame the bitmap sits
+    const cut = s => createImageBitmap(s, sl.sx, 0, sl.sw, FILM.h, { resizeWidth: sl.rw, resizeHeight: sl.rh, resizeQuality: 'high' })
+      .catch(() => { g = { sx: 0, sw: FILM.w }; return createImageBitmap(s); });   // can't slice: the whole frame
+    (src instanceof Blob ? cut(src) : src.decode().then(() => cut(src))).then(b => {
       decoding.delete(i);
-      if (Math.abs(i - head) > KEEP) b.close();
-      else { bmps.set(i, b); if (Math.abs(i - head) <= 1) kick(); }
+      if (Math.abs(i - head) > KEEP) { b.close(); return schedule(); }
+      const old = bmps.get(i);
+      bmps.set(i, { b, sl, sx: g.sx, sw: g.sw });                // each bitmap remembers its slice and its place
+      if (old && old !== drawnA && old !== drawnB) old.b.close();
+      if (Math.abs(i - head) <= 1 || old) kick();
       schedule();
     }, () => decoding.delete(i));
   }
   function schedule() {
-    for (const [i, b] of bmps) if (Math.abs(i - head) > KEEP) { b.close(); bmps.delete(i); }
+    for (const [i, e] of bmps) if (Math.abs(i - head) > KEEP) { if (e !== drawnA && e !== drawnB) e.b.close(); bmps.delete(i); }
     for (let d = 0; d <= AHEAD && decoding.size < LANES; d++) {
       decode(head + d * dir);
       if (d <= BEHIND) decode(head - d * dir);
@@ -628,8 +647,9 @@
       const fh = Math.max(vh, vw * 9 / 16), fw = fh * 16 / 9, x = (vw - fw) / 2, y = (vh - fh) / 2;
       fc.clearRect(0, 0, vw, vh);
       fc.save();
-      if (a && paper < 1) fc.drawImage(a, x, y, fw, fh);
-      if (a && b && k > .02 && paper < 1) { fc.globalAlpha = k; fc.drawImage(b, x, y, fw, fh); }  // sub-frame blend
+      const put = e => fc.drawImage(e.b, x + e.sx * fw / FILM.w, y, e.sw * fw / FILM.w, fh);
+      if (a && paper < 1) put(a);
+      if (a && b && k > .02 && paper < 1) { fc.globalAlpha = k; put(b); }  // sub-frame blend
       if (paper > 0) { fc.globalAlpha = paper; fc.fillStyle = PAPER; fc.fillRect(0, 0, vw, vh); }
       fc.restore();
     }
@@ -673,8 +693,10 @@
     intro.addEventListener('ended', finishIntro);
     intro.addEventListener('playing', () => { loop.preload = 'auto'; loop.load(); }, { once: true });   // ready for the hand-off
     intro.addEventListener('error', finishIntro, true);
-    const go = () => intro.play().catch(finishIntro);             // autoplay refused: rest on the empty portal
-    intro.readyState >= 2 ? go() : intro.addEventListener('canplay', go, { once: true });
+    // play() at once: it is what starts the download on phones that never preload (data saver, low power).
+    // Refused, or still not moving after 7s: rest on the empty portal rather than a frozen poster.
+    intro.play().catch(finishIntro);
+    setTimeout(() => { if (!introDone && intro.currentTime === 0) finishIntro(); }, 7000);
   }
   document.getElementById('cue').addEventListener('click', () => {
     if (!introDone) finishIntro();
@@ -794,7 +816,7 @@
   function layout() {
     cam = { vw: hero.clientWidth, vh: hero.clientHeight };
     placeAmb();
-    if (filmOn) { measure(); sizeFilm(); drawn = ''; camera(); }
+    if (filmOn) { measure(); sizeFilm(); sliceFilm(); schedule(); drawn = ''; camera(); }
   }
   // journey geometry is measured on layout, so a scroll tick never forces a layout read
   let target = 0, raf = 0, last = 0, jTop = 0, jSpan = 1;
