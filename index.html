@@ -696,6 +696,7 @@
     const arrived = paper >= .97;
     afterEl.classList.toggle('arrived', arrived);
     soundBtn.classList.toggle('compact', arrived);
+    music.away(arrived);                                          // the music dies down on the pages below
     const isBright = (FILM.bright || []).some(([a, b]) => f >= a - 6 && f <= b + 6);
     if (isBright !== bright) { bright = isBright; hero.classList.toggle('bright', bright); }
   }
@@ -741,6 +742,9 @@
     let on = true;
     try { on = localStorage.getItem('origin-sound') !== 'off'; } catch (e) {}
     let ctx, master, decks = [], live = 0, playing = false, cutTimer = 0;
+    // `away`: the visitor is past the film, on the pages below it. The music dies down there and stays paused.
+    let away = false, awayTimer = 0;
+    const hush = () => { if (away) decks.forEach(d => d.a.pause()); };
     function deck() {
       const a = new Audio('film/audio/firebird-finale.m4a');
       a.preload = 'auto'; a.loop = true;
@@ -760,19 +764,24 @@
     function start() {
       if (!ctx) {
         ctx = new (window.AudioContext || window.webkitAudioContext)();
-        master = ctx.createGain(); master.gain.value = .45; master.connect(ctx.destination);
+        master = ctx.createGain(); master.gain.value = away ? 0 : .45; master.connect(ctx.destination);
         decks = [deck(), deck()];
       }
       ctx.resume();
       const d = decks[live];
-      d.a.play().then(() => { if (!on) return; ramp(d.g, 1, .8); setPlaying(true); }, () => setPlaying(false));
+      // past the film it still starts (the gesture is what unlocks it), but silent, and pauses once quiet
+      d.a.play().then(() => {
+        if (!on) return;
+        ramp(d.g, 1, .8); setPlaying(true);
+        if (away) { clearTimeout(awayTimer); awayTimer = setTimeout(hush, 3000); }
+      }, () => setPlaying(false));
     }
     function stop() {
       setPlaying(false);
       decks.forEach(d => ramp(d.g, 0, .5));
       setTimeout(() => { if (!on) decks.forEach(d => d.a.pause()); }, 700);
     }
-    function setPlaying(v) { playing = v; btn.classList.toggle('playing', v); }
+    function setPlaying(v) { playing = v; btn.classList.toggle('playing', v && !away); }
     function render() {
       btn.classList.toggle('on', on);
       btn.setAttribute('aria-pressed', on);
@@ -795,7 +804,18 @@
       // a new era has come up: back to 2:05 (debounced, so a fast scroll across several eras makes one cut)
       milestone() {
         clearTimeout(cutTimer);
-        cutTimer = setTimeout(() => { if (playing) cut(RESTART); }, 120);
+        cutTimer = setTimeout(() => { if (playing && !away) cut(RESTART); }, 120);
+      },
+      // past the film (true) the music dies down over ~2s, then pauses; back up into it (false) it returns
+      away(v) {
+        if (v === away) return;
+        away = v;
+        clearTimeout(awayTimer);
+        btn.classList.toggle('playing', playing && !away);
+        if (!ctx) return;                           // nothing has sounded yet: start() will begin silent
+        if (v) { clearTimeout(cutTimer); ramp(master, 0, 2.2); awayTimer = setTimeout(hush, 3000); return; }
+        if (on && playing) decks[live].a.play().catch(() => {});
+        ramp(master, .45, 2);
       },
     };
   })();
