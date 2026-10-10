@@ -78,6 +78,8 @@
   }
   .brand { display: inline-flex; align-items: center; gap: clamp(12px, 1vw, 18px); font: 500 clamp(15px, 1.15vw, 20px)/1 var(--serif); letter-spacing: .34em; margin-right: -.34em; white-space: nowrap; color: var(--ink); }
   .mark { --mh: clamp(30px, 2.4vw, 40px); flex: none; height: var(--mh); width: calc(var(--mh) * 952 / 574); fill: currentColor; overflow: visible; }
+  /* the mark's glow: a light ink haze on paper (default); on a dark ground add .mark-glow for the full white light */
+  .mark-glow { --mark-haze: .55; --mark-bloom: .38; }
   .nav { display: flex; align-items: center; gap: clamp(22px, 2.4vw, 46px); }
   .menu { display: flex; gap: clamp(22px, 2.4vw, 46px); margin: 0; padding: 0; list-style: none; }
   .menu a { font: 400 13px/1 var(--sans); letter-spacing: .02em; color: var(--ink-dim); padding-bottom: 5px; border-bottom: 1px solid transparent; transition: color .3s, border-color .3s; }
@@ -366,17 +368,24 @@
 </style>
 </head>
 <body>
-<!-- the Origin Capital mark: two pillars, a doorway, standing on the horizon, with light pooling at the
-     corners where each pillar meets the horizon (the aura is drawn behind the stems and spills past the box) -->
+<!-- the Origin Capital mark: two pillars, a doorway, standing on the horizon. As in the design, light pools at
+     the outer foot of each pillar, the pillars bloom softly and their tops fade out. Every effect is drawn in the
+     mark's own colour (currentColor), so it is a white glow on a dark ground and a soft ink haze on paper. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <!-- white light at the outer foot of each pillar (kept out of the doorway itself) -->
-    <radialGradient id="oc-aura"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".3" stop-color="#fff" stop-opacity=".2"/><stop offset=".65" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-    <clipPath id="oc-aura-out"><rect x="-700" y="-200" width="647" height="1000"/><rect x="53" y="-200" width="647" height="1000"/><rect x="-700" y="574" width="1400" height="300"/></clipPath>
+    <filter id="oc-haze" filterUnits="userSpaceOnUse" x="-900" y="-400" width="1800" height="1400"><feGaussianBlur stdDeviation="34"/></filter>
+    <filter id="oc-bloom" filterUnits="userSpaceOnUse" x="-900" y="-400" width="1800" height="1400"><feGaussianBlur stdDeviation="16"/></filter>
+    <linearGradient id="oc-fade" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="574"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".11" stop-color="#fff"/></linearGradient>
+    <mask id="oc-tops" maskUnits="userSpaceOnUse" x="-900" y="-400" width="1800" height="1400"><rect x="-900" y="-400" width="1800" height="1400" fill="url(#oc-fade)"/></mask>
+    <!-- keep the pooled light out of the doorway itself (above the horizon) -->
+    <clipPath id="oc-out"><rect x="-900" y="-400" width="847" height="1400"/><rect x="53" y="-400" width="847" height="1400"/><rect x="-900" y="574" width="1800" height="400"/></clipPath>
   </defs>
   <symbol id="oc-mark" viewBox="-476 0 952 574" overflow="visible">
-    <g clip-path="url(#oc-aura-out)"><ellipse cx="-102" cy="560" rx="150" ry="95" fill="url(#oc-aura)"/><ellipse cx="102" cy="560" rx="150" ry="95" fill="url(#oc-aura)"/></g>
-    <polygon points="-476,574 -98,563.5 -93,.5 -57,39 -53,574"/><polygon points="476,574 98,563.5 93,.5 57,39 53,574"/>
+    <g clip-path="url(#oc-out)"><g filter="url(#oc-haze)" style="opacity: var(--mark-haze, .3)"><ellipse cx="-112" cy="548" rx="105" ry="58"/><ellipse cx="112" cy="548" rx="105" ry="58"/></g></g>
+    <g mask="url(#oc-tops)">
+      <path filter="url(#oc-bloom)" style="opacity: var(--mark-bloom, .16)" d="M-476,574 L-98,563.5 L-93,.5 L-57,39 L-53,574Z M476,574 L98,563.5 L93,.5 L57,39 L53,574Z"/>
+      <path d="M-476,574 L-98,563.5 L-93,.5 L-57,39 L-53,574Z M476,574 L98,563.5 L93,.5 L57,39 L53,574Z"/>
+    </g>
   </symbol>
 </svg>
 <div class="journey" id="journey">
