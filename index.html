@@ -5,21 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Origin Capital</title>
 <meta name="description" content="Origin Capital — different centuries, same kind of people. We find the rare few who shape what comes next.">
-<link rel="canonical" href="https://origincapital.vc/">
-<!-- link previews (iMessage, Slack, LinkedIn, X…) -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Origin Capital">
-<meta property="og:url" content="https://origincapital.vc/">
-<meta property="og:title" content="Origin Capital">
-<meta property="og:description" content="Different centuries. Same kind of people. We find the rare few who shape what comes next.">
-<meta property="og:image" content="https://origincapital.vc/film/og/og.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Origin Capital">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Origin Capital">
-<meta name="twitter:description" content="Different centuries. Same kind of people. We find the rare few who shape what comes next.">
-<meta name="twitter:image" content="https://origincapital.vc/film/og/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -38,15 +23,12 @@
     --gutter: clamp(16px, 2.9vw, 56px);
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: #f4efe6; color: var(--ivory); }   /* paper, so nothing dark shows past the page's edges */
+  html, body { margin: 0; background: var(--bg); color: var(--ivory); }
   body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
   a { color: inherit; text-decoration: none; }
 
   .hero {
-    position: relative; height: 100vh; height: 100lvh; min-height: 560px;
-    /* lvh: the full screen with the phone's toolbar hidden. It never changes as the toolbar slides in and out,
-       so nothing re-lays out mid-scroll; --tb lifts the bottom-anchored bits clear of the toolbar when it shows */
-    --tb: 0px;
+    position: relative; height: 100vh; height: 100svh; min-height: 560px;
     overflow: hidden; isolation: isolate;
     background: #ece4d6 url(film/intro/end.webp) center / cover no-repeat;   /* the empty portal, until frames decode */
   }
@@ -59,19 +41,6 @@
   }
   .intro-done .intro { opacity: 0; visibility: hidden; }
   .film { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; display: block; pointer-events: none; }
-
-  /* ---------- life in the empty portal (after the opening film): a looping film of ships crossing the sky and ---------- */
-  /* mist rolling through the clouds. It starts and ends on the empty-portal frame, so it loops and hands off invisibly. */
-  /* .amb is laid over the film frame exactly (the same cover box the canvas draws). */
-  .amb {
-    position: absolute; z-index: 2; pointer-events: none; overflow: hidden;
-    opacity: 0; visibility: hidden; transition: opacity .8s ease, visibility 0s linear .8s;
-  }
-  @supports (height: 100lvh) { .hero { --tb: calc(100lvh - 100svh); } }
-  .intro-done .amb { opacity: 1; visibility: visible; transition: opacity .8s ease; }
-  .amb-in, .amb-off { position: absolute; inset: 0; }
-  .amb-in.amb-off { display: none; }                              /* gone (and not animating) once the journey starts */
-  .amb video { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; }
   /* a whisper of contrast behind the headline, nothing more */
   .shade {
     position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: var(--copy-shade, 1);
@@ -112,13 +81,13 @@
   .explore:hover i { width: 48px; }
   .explore svg { width: 13px; height: 13px; }
   .years {
-    position: absolute; left: var(--gutter); bottom: calc(clamp(26px, 4.6vh, 50px) + var(--tb)); margin: 0; padding: 0; list-style: none;
+    position: absolute; left: var(--gutter); bottom: clamp(26px, 4.6vh, 50px); margin: 0; padding: 0; list-style: none;
     display: flex; align-items: center; gap: 14px; font: 500 10px/1 var(--sans); letter-spacing: .18em; color: var(--ink);
   }
   .years li { display: flex; align-items: center; gap: 14px; }
   .years li + li::before { content: ""; width: clamp(22px, 3vw, 46px); height: 1px; background: rgba(27, 25, 22, .45); }
   .cue {
-    position: absolute; right: var(--gutter); bottom: calc(clamp(24px, 4.4vh, 48px) + var(--tb));
+    position: absolute; right: var(--gutter); bottom: clamp(24px, 4.4vh, 48px);
     display: grid; justify-items: center; gap: 10px; font: 400 11px/1 var(--sans); letter-spacing: .04em; color: var(--ink);
     background: none; border: 0; padding: 0; cursor: pointer;
   }
@@ -174,7 +143,7 @@
   .tl-era .yr { font: 500 11px/1 var(--sans); letter-spacing: .3em; margin-right: -.3em; text-transform: uppercase; color: rgba(238, 232, 221, .82); }
   /* the scene's line, set low like a subtitle */
   .tl-line {
-    position: absolute; z-index: 3; left: 50%; bottom: calc(clamp(30px, 7vh, 72px) + var(--tb)); transform: translateX(-50%);
+    position: absolute; z-index: 3; left: 50%; bottom: clamp(30px, 7vh, 72px); transform: translateX(-50%);
     opacity: 0; pointer-events: none;
     width: min(90vw, 760px); margin: 0; text-align: center; white-space: pre-line;
     font: italic 400 clamp(20px, 1.9vw, 32px)/1.3 var(--serif); color: var(--ivory);
@@ -313,9 +282,6 @@
     .a-grid { grid-template-columns: 1fr; }
     .a-nav { flex-wrap: wrap; justify-content: center; }
   }
-  @media (max-width: 360px) {
-    .brand > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }   /* the mark alone */
-  }
 
   /* entrance */
   .rise { opacity: 0; transform: translateY(14px); transition: opacity 1.2s ease, transform 1.4s cubic-bezier(.2,.7,.2,1); }
@@ -331,14 +297,11 @@
     .explore { margin-top: 18px; }
     .years { display: none; }
     .cta { padding: 10px 16px; font-size: 12px; }
-    .brand { gap: 10px; font-size: 13px; letter-spacing: .2em; margin-right: -.2em; }
-    .brand .mark { --mh: 24px; }
     .shade { background: linear-gradient(to bottom, rgba(248, 243, 234, .85) 0%, rgba(248, 243, 234, .6) 30%, rgba(248, 243, 234, 0) 52%); }
   }
   @media (prefers-reduced-motion: reduce) {
     .sound.playing .bars i { animation: none; height: 8px; }
     .rise, .intro, .has-film .after { transition: none; }
-    .amb { display: none; }
     .intro-done .cue i::before { animation: none; }
   }
 </style>
@@ -347,17 +310,13 @@
 <!-- the Origin Capital mark: two pillars, a doorway, standing on the horizon -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="oc-mark" viewBox="-476 0 952 574">
   <polygon points="-476,574 -98,563.5 -93,.5 -57,39 -53,574"/><polygon points="476,574 98,563.5 93,.5 57,39 53,574"/>
-</symbol>
-</svg>
+</symbol></svg>
 <div class="journey" id="journey">
 <section class="hero" id="hero">
   <canvas class="film" id="film" aria-hidden="true"></canvas>
   <video class="intro" id="intro" muted playsinline preload="auto" poster="film/intro/poster.webp" aria-hidden="true">
     <source src="film/intro/intro.mp4" type="video/mp4">
   </video>
-  <div class="amb" id="amb" aria-hidden="true"><div class="amb-in" id="ambIn">
-    <video id="loop" muted playsinline loop preload="none" src="film/intro/ambient.mp4"></video>
-  </div></div>
   <div class="shade" aria-hidden="true"></div>
   <div class="tl" id="tl">
     <p class="tl-era" aria-live="polite"><span class="age"></span><span class="nm"></span><span class="yr"></span></p>
@@ -518,17 +477,8 @@
 
   // Frames: every JPEG is fetched once and kept compressed (~13 MB). Only a window around the
   // playhead is decoded, off the main thread, into ImageBitmaps, so a draw never waits on a decode.
-  // On a narrow (phone) screen only a slice of each frame is ever visible, so only that slice is decoded, at
-  // no more pixels than the canvas shows: ~4× less memory on a phone, which keeps mobile browsers from reloading.
   const srcs = [], bmps = new Map(), decoding = new Set();
-  const AHEAD = 20, BEHIND = 6, KEEP = 24, LANES = 4;           // ~27 decoded frames live (≤ ~225 MB on a desktop)
-  let slice = { sx: 0, sw: 1920, rw: 1920, rh: 1080 };
-  function sliceFilm() {
-    const { vw, vh } = cam, fw = Math.max(vw, vh * 16 / 9), W = FILM.w, H = FILM.h;
-    const sw = Math.min(W, Math.ceil(W * vw / fw) + 8), sx = Math.max(0, Math.floor((W - sw) / 2));
-    const k = Math.min(1, (fw * fd) / W);                         // bitmap pixels per source pixel
-    slice = { sx, sw, rw: Math.max(1, Math.round(sw * k)), rh: Math.max(1, Math.round(H * k)) };
-  }
+  const AHEAD = 20, BEHIND = 6, KEEP = 24, LANES = 4;           // ~27 decoded 1080p frames live (~225 MB)
   let head = 0, dir = 1;
   const fetchFrame = i => location.protocol === 'file:'
     ? new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = FILM.src(i); })
@@ -545,24 +495,18 @@
     for (let k = 0; k < 6; k++) pump();
   }
   function decode(i) {
-    if (i < 0 || i >= FILM.frames || !srcs[i] || (bmps.has(i) && bmps.get(i).sl === slice) || decoding.has(i) || decoding.size >= LANES) return;
+    if (i < 0 || i >= FILM.frames || !srcs[i] || bmps.has(i) || decoding.has(i) || decoding.size >= LANES) return;
     decoding.add(i);
-    const src = srcs[i], sl = slice;
-    let g = sl;                                                    // where in the frame the bitmap sits
-    const cut = s => createImageBitmap(s, sl.sx, 0, sl.sw, FILM.h, { resizeWidth: sl.rw, resizeHeight: sl.rh, resizeQuality: 'high' })
-      .catch(() => { g = { sx: 0, sw: FILM.w }; return createImageBitmap(s); });   // can't slice: the whole frame
-    (src instanceof Blob ? cut(src) : src.decode().then(() => cut(src))).then(b => {
+    const src = srcs[i];
+    (src instanceof Blob ? createImageBitmap(src) : src.decode().then(() => createImageBitmap(src))).then(b => {
       decoding.delete(i);
-      if (Math.abs(i - head) > KEEP) { b.close(); return schedule(); }
-      const old = bmps.get(i);
-      bmps.set(i, { b, sl, sx: g.sx, sw: g.sw });                // each bitmap remembers its slice and its place
-      if (old && old !== drawnA && old !== drawnB) old.b.close();
-      if (Math.abs(i - head) <= 1 || old) kick();
+      if (Math.abs(i - head) > KEEP) b.close();
+      else { bmps.set(i, b); if (Math.abs(i - head) <= 1) kick(); }
       schedule();
     }, () => decoding.delete(i));
   }
   function schedule() {
-    for (const [i, e] of bmps) if (Math.abs(i - head) > KEEP) { if (e !== drawnA && e !== drawnB) e.b.close(); bmps.delete(i); }
+    for (const [i, b] of bmps) if (Math.abs(i - head) > KEEP) { b.close(); bmps.delete(i); }
     for (let d = 0; d <= AHEAD && decoding.size < LANES; d++) {
       decode(head + d * dir);
       if (d <= BEHIND) decode(head - d * dir);
@@ -596,7 +540,7 @@
     set(el, 'visibility', o < .01 ? 'hidden' : '');
   }
 
-  let shownEra = -1, eraTimer, cuedEra = -1;
+  let shownEra = -1, eraTimer;
   const tlLine = document.getElementById('tlLine');
   function nameEra(i) {
     const sc = PORTALS[i];
@@ -609,7 +553,6 @@
     if (i === shownEra) return;
     const was = shownEra;
     shownEra = i;
-    if (i >= 0 && i !== cuedEra) { cuedEra = i; music.milestone(); }   // each new era opens on the 2:05 swell
     tl.classList.toggle('on', i >= 0);
     tlItems.forEach((li, k) => { li.classList.toggle('past', i >= 0 && k < i); li.classList.toggle('now', k === i); });
     clearTimeout(eraTimer);
@@ -629,9 +572,6 @@
     fade(uiBody, 1 - copyOut, -18 * copyOut);
     set(hero, '--copy-shade', (1 - copyOut).toFixed(3));
     fade(ui, 1 - smooth(ramp(p, START * .4, START * 1.5)), 0);
-    fade(ambIn, 1 - copyOut, 0);
-    const ambOff = copyOut >= .999;
-    if (ambOff !== ambIn.classList.contains('amb-off')) { ambIn.classList.toggle('amb-off', ambOff); playLoop(); }
 
     // the film: frame 0 is the opening film's last frame (the empty portal), so the hand-off is invisible
     const f = ramp(p, START, END) * (FILM.frames - 1);
@@ -647,9 +587,8 @@
       const fh = Math.max(vh, vw * 9 / 16), fw = fh * 16 / 9, x = (vw - fw) / 2, y = (vh - fh) / 2;
       fc.clearRect(0, 0, vw, vh);
       fc.save();
-      const put = e => fc.drawImage(e.b, x + e.sx * fw / FILM.w, y, e.sw * fw / FILM.w, fh);
-      if (a && paper < 1) put(a);
-      if (a && b && k > .02 && paper < 1) { fc.globalAlpha = k; put(b); }  // sub-frame blend
+      if (a && paper < 1) fc.drawImage(a, x, y, fw, fh);
+      if (a && b && k > .02 && paper < 1) { fc.globalAlpha = k; fc.drawImage(b, x, y, fw, fh); }  // sub-frame blend
       if (paper > 0) { fc.globalAlpha = paper; fc.fillStyle = PAPER; fc.fillRect(0, 0, vw, vh); }
       fc.restore();
     }
@@ -662,10 +601,10 @@
     set(tlFill, 'transform', `scaleX(${(fill / (n - 1)).toFixed(4)})`);
     if (f > FILM.frames - 30) era = -1;                           // he's walking into the light
     setEra(era);
+    music.at(p < START ? -1 : f, p >= WHITE - .001);
     const arrived = paper >= .97;
     afterEl.classList.toggle('arrived', arrived);
     soundBtn.classList.toggle('compact', arrived);
-    music.away(arrived);                                          // the music dies down on the pages below
     const isBright = (FILM.bright || []).some(([a, b]) => f >= a - 6 && f <= b + 6);
     if (isBright !== bright) { bright = isBright; hero.classList.toggle('bright', bright); }
   }
@@ -681,7 +620,7 @@
     introDone = true;
     let waited = 0;
     (function swap() {                                           // fade out only once frame 0 is on the canvas
-      if (drawnA || waited > 2500) { hero.classList.add('intro-done'); intro.pause(); playLoop(); kick(); return; }
+      if (drawnA || waited > 2500) { hero.classList.add('intro-done'); intro.pause(); kick(); return; }
       waited += 100; setTimeout(swap, 100);
     })();
     kick();
@@ -691,12 +630,9 @@
     intro.removeAttribute('autoplay'); intro.preload = 'none';
   } else {
     intro.addEventListener('ended', finishIntro);
-    intro.addEventListener('playing', () => { loop.preload = 'auto'; loop.load(); }, { once: true });   // ready for the hand-off
     intro.addEventListener('error', finishIntro, true);
-    // play() at once: it is what starts the download on phones that never preload (data saver, low power).
-    // Refused, or still not moving after 7s: rest on the empty portal rather than a frozen poster.
-    intro.play().catch(finishIntro);
-    setTimeout(() => { if (!introDone && intro.currentTime === 0) finishIntro(); }, 7000);
+    const go = () => intro.play().catch(finishIntro);             // autoplay refused: rest on the empty portal
+    intro.readyState >= 2 ? go() : intro.addEventListener('canplay', go, { once: true });
   }
   document.getElementById('cue').addEventListener('click', () => {
     if (!introDone) finishIntro();
@@ -704,56 +640,80 @@
   });
 
   // ---------- music: Stravinsky, The Firebird (1919 suite), VI. Finale ----------
-  // It plays on from the start; each time the journey reaches a new era (a milestone) it crossfades back to
-  // 2:05, the liftoff surge, so every section opens on the same swell. It loops if it runs out.
-  const RESTART = 125;
+  // Music can't be scrubbed like frames, so it plays at its own pace, but it is pinned to the film's key
+  // moments: when the scroll reaches one, the music cuts forward to its accent at that instant, however fast
+  // you scroll. Hits only move the music forward, so it never replays a passage; linger and it plays on.
+  // [part, frame within that part, music seconds]; part −1 is the flight through the portal, 0… are the scenes
+  const HITS = [
+    [-1, 58, 29.0],    // crossing the portal's glowing threshold: the first big accent
+    [0, 30, 38.6],     // Caesar appears in the blazing doorway
+    [0, 120, 57.7],    // Caesar strides down the aisle: the full theme
+    [1, 62, 64.7],     // the Renaissance arch opens
+    [1, 110, 78.7],    // Lorenzo studies the drawing
+    [2, 55, 84.0],     // the drawing becomes the Los Alamos blackboard
+    [2, 143, 103.3],   // the Trinity flash and fireball: the biggest surge in the piece (1:43.5)
+    [3, 20, 110.6],    // the rocket emerges from the white
+    [3, 88, 124.8],    // liftoff (2:05)
+    [4, 110, 171.2],   // the traveller walks into the light (2:51)
+  ];
+  const END_HIT = 192.4;                     // the end screen: the grand pause, then the final chords (3:12.5)
+  const HUSH = [[94.6, 102.9]];              // the near-silent passage before the surge: never dwell in it
   const music = (() => {
     const btn = document.getElementById('sound'), lbl = btn.querySelector('.lbl');
     // sound is on by default (a visitor's choice to turn it off is remembered); `playing` is whether the
     // browser has actually let it start yet
     let on = true;
     try { on = localStorage.getItem('origin-sound') !== 'off'; } catch (e) {}
-    let ctx, master, decks = [], live = 0, playing = false, cutTimer = 0;
-    // `away`: the visitor is past the film, on the pages below it. The music dies down there and stays paused.
-    let away = false, awayTimer = 0;
-    const hush = () => { if (away) decks.forEach(d => d.a.pause()); };
+    let ctx, master, decks = [], live = 0, playing = false, lastF = -1, lastEnd = false, hitTimer = 0, wanted = -1;
+    const hits = () => HITS.map(([part, at, t]) => [(part < 0 ? 0 : FILM.eras[part].start) + at, t]);
     function deck() {
       const a = new Audio('film/audio/firebird-finale.m4a');
-      a.preload = 'auto'; a.loop = true;
+      a.preload = 'auto';
       const g = ctx.createGain(); g.gain.value = 0;
       ctx.createMediaElementSource(a).connect(g).connect(master);
       return { a, g };
     }
     const ramp = (g, v, t) => { g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setTargetAtTime(v, ctx.currentTime, t / 3); };
-    function cut(t) {                              // crossfade to t on the other deck: no click, no gap
+    const now = () => decks[live].a.currentTime;
+    const ended = () => decks[live].a.ended || decks[live].a.paused;
+    function cut(t, punch) {
       const cur = decks[live], next = decks[1 - live];
       next.a.currentTime = t;
       next.a.play().catch(() => {});
-      ramp(next.g, 1, .3); ramp(cur.g, 0, .8);
-      setTimeout(() => { if (decks[live] !== cur) cur.a.pause(); }, 1200);
+      ramp(next.g, 1, punch ? .25 : .9); ramp(cur.g, 0, punch ? .7 : 1.1);
+      setTimeout(() => { if (decks[live] !== cur) cur.a.pause(); }, 1300);
       live = 1 - live;
     }
+    // where the music belongs for a given place in the film: the latest hit at or before it
+    const placeFor = (f, end) => end ? END_HIT : p0(f);
+    function p0(f) { let t = 0; for (const [hf, ht] of hits()) if (f >= hf) t = ht; return t; }
+    function hitLater(t) {                      // debounce: a fast scroll across several hits makes one cut
+      wanted = Math.max(wanted, t);
+      clearTimeout(hitTimer);
+      hitTimer = setTimeout(() => { if (playing && (now() < wanted - .4 || ended())) cut(wanted, true); wanted = -1; }, 90);
+    }
+    setInterval(() => {                         // skip the hush if the music drifts into it on its own
+      if (!playing) return;
+      const t = now();
+      for (const [a, b] of HUSH) if (t > a && t < b) cut(b, false);
+    }, 250);
     function start() {
       if (!ctx) {
         ctx = new (window.AudioContext || window.webkitAudioContext)();
-        master = ctx.createGain(); master.gain.value = away ? 0 : .45; master.connect(ctx.destination);
+        master = ctx.createGain(); master.gain.value = .45; master.connect(ctx.destination);
         decks = [deck(), deck()];
       }
       ctx.resume();
-      const d = decks[live];
-      // past the film it still starts (the gesture is what unlocks it), but silent, and pauses once quiet
-      d.a.play().then(() => {
-        if (!on) return;
-        ramp(d.g, 1, .8); setPlaying(true);
-        if (away) { clearTimeout(awayTimer); awayTimer = setTimeout(hush, 3000); }
-      }, () => setPlaying(false));
+      const d = decks[live], want = lastF < 0 ? 0 : placeFor(lastF, lastEnd);
+      if (d.a.ended || d.a.currentTime < want - .4 || d.a.currentTime === 0) d.a.currentTime = want;
+      d.a.play().then(() => { if (!on) return; ramp(d.g, 1, .8); setPlaying(true); }, () => setPlaying(false));
     }
     function stop() {
       setPlaying(false);
       decks.forEach(d => ramp(d.g, 0, .5));
       setTimeout(() => { if (!on) decks.forEach(d => d.a.pause()); }, 700);
     }
-    function setPlaying(v) { playing = v; btn.classList.toggle('playing', v && !away); }
+    function setPlaying(v) { playing = v; btn.classList.toggle('playing', v); }
     function render() {
       btn.classList.toggle('on', on);
       btn.setAttribute('aria-pressed', on);
@@ -773,21 +733,17 @@
     render();
     if (on) start();                                // starts at once wherever the browser allows it
     return {
-      // a new era has come up: back to 2:05 (debounced, so a fast scroll across several eras makes one cut)
-      milestone() {
-        clearTimeout(cutTimer);
-        cutTimer = setTimeout(() => { if (playing && !away) cut(RESTART); }, 120);
-      },
-      // past the film (true) the music dies down over ~2s, then pauses; back up into it (false) it returns
-      away(v) {
-        if (v === away) return;
-        away = v;
-        clearTimeout(awayTimer);
-        btn.classList.toggle('playing', playing && !away);
-        if (!ctx) return;                           // nothing has sounded yet: start() will begin silent
-        if (v) { clearTimeout(cutTimer); ramp(master, 0, 2.2); awayTimer = setTimeout(hush, 3000); return; }
-        if (on && playing) decks[live].a.play().catch(() => {});
-        ramp(master, .45, 2);
+      // called every camera frame with the film position; f < 0 while the hero is still up
+      at(f, end) {
+        const prev = lastF, prevEnd = lastEnd;
+        lastF = f; lastEnd = end;
+        if (!playing || f === prev && end === prevEnd) return;
+        if (end && !prevEnd) { if (now() < END_HIT - .4 || ended()) hitLater(END_HIT); return; }
+        if (f > prev) {                          // moving forward: fire the last hit we crossed
+          let t = -1;
+          for (const [hf, ht] of hits()) if (prev < hf && f >= hf) t = ht;
+          if (t >= 0) hitLater(t);
+        } else if (ended() && f >= 0) hitLater(placeFor(f, end));   // music ran out and they scrolled back
       },
     };
   })();
@@ -797,26 +753,10 @@
   if (!filmOn) new IntersectionObserver(([e]) => soundBtn.classList.toggle('compact', e.isIntersecting), { rootMargin: '0px 0px -40% 0px' })
     .observe(document.getElementById('after'));
 
-  // ---------- life in the empty portal ----------
-  const amb = document.getElementById('amb'), ambIn = document.getElementById('ambIn'), loop = document.getElementById('loop');
-  // the loop plays once the opening film has ended, and only while the hero is up (paused once the journey starts)
-  function playLoop() {
-    if (reduced) return;
-    const want = hero.classList.contains('intro-done') && !ambIn.classList.contains('amb-off');
-    if (want && loop.paused) loop.play().catch(() => {});
-    else if (!want && !loop.paused) loop.pause();
-  }
-  if (!filmOn && !reduced) { loop.preload = 'auto'; playLoop(); }       // no scroll film: the loop simply plays
-  function placeAmb() {                                    // the same cover box the film frame is drawn into
-    const { vw, vh } = cam, fh = Math.max(vh, vw * 9 / 16), fw = fh * 16 / 9;
-    Object.assign(amb.style, { width: fw + 'px', height: fh + 'px', left: (vw - fw) / 2 + 'px', top: (vh - fh) / 2 + 'px' });
-  }
-
   // ---------- layout & loop ----------
   function layout() {
     cam = { vw: hero.clientWidth, vh: hero.clientHeight };
-    placeAmb();
-    if (filmOn) { measure(); sizeFilm(); sliceFilm(); schedule(); drawn = ''; camera(); }
+    if (filmOn) { measure(); sizeFilm(); drawn = ''; camera(); }
   }
   // journey geometry is measured on layout, so a scroll tick never forces a layout read
   let target = 0, raf = 0, last = 0, jTop = 0, jSpan = 1;
