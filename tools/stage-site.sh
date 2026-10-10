@@ -7,7 +7,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 rm -rf dist && mkdir -p dist/film
-cp index.html dist/
+cp index.html og.jpg apple-touch-icon.png favicon.svg dist/
 cp film/manifest.js dist/film/
 cp -R film/frames dist/film/frames
 mkdir -p dist/film/intro && cp film/intro/intro.mp4 film/intro/poster.webp film/intro/end.webp dist/film/intro/

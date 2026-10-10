@@ -5,11 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Origin Capital</title>
 <meta name="description" content="Origin Capital — different centuries, same kind of people. We find the rare few who shape what comes next.">
+<meta name="theme-color" content="#f4efe6">
+<link rel="canonical" href="https://origincapital.vc/">
+<!-- link previews (iMessage, WhatsApp, Slack, LinkedIn, X): og.jpg is 1200×630, under WhatsApp's ~300 KB limit -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Origin Capital">
+<meta property="og:url" content="https://origincapital.vc/">
+<meta property="og:title" content="Origin Capital — Different centuries. Same kind of people.">
+<meta property="og:description" content="We find the rare few who shape what comes next.">
+<meta property="og:image" content="https://origincapital.vc/og.jpg">
+<meta property="og:image:secure_url" content="https://origincapital.vc/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A traveller stands before a glowing portal opening onto a city of the future. Origin Capital — Different centuries. Same kind of people.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Origin Capital — Different centuries. Same kind of people.">
+<meta name="twitter:description" content="We find the rare few who shape what comes next.">
+<meta name="twitter:image" content="https://origincapital.vc/og.jpg">
+<meta name="twitter:image:alt" content="A traveller stands before a glowing portal opening onto a city of the future.">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="film/intro/poster.webp">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-560 -270 1120 1120'%3E%3Crect x='-560' y='-270' width='1120' height='1120' fill='%230a0a0b'/%3E%3Cpath fill='%23efe9de' d='M-476,574 L-98,563.5 L-93,.5 L-57,39 L-53,574Z M476,574 L98,563.5 L93,.5 L57,39 L53,574Z'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <style>
   :root {
     --ivory: #efe9de;
@@ -23,12 +43,12 @@
     --gutter: clamp(16px, 2.9vw, 56px);
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--ivory); }
+  html, body { margin: 0; background: #f4efe6; color: var(--ivory); }   /* paper, so nothing dark shows past the page's edges (iOS toolbar, overscroll) */
   body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
   a { color: inherit; text-decoration: none; }
 
   .hero {
-    position: relative; height: 100vh; height: 100svh; min-height: 560px;
+    position: relative; height: 100vh; height: 100dvh; min-height: 560px;   /* dvh: tracks the phone's toolbar, so no strip opens below */
     overflow: hidden; isolation: isolate;
     background: #ece4d6 url(film/intro/end.webp) center / cover no-repeat;   /* the empty portal, until frames decode */
   }
@@ -57,7 +77,7 @@
     display: flex; align-items: center; justify-content: space-between; gap: 24px;
   }
   .brand { display: inline-flex; align-items: center; gap: clamp(12px, 1vw, 18px); font: 500 clamp(15px, 1.15vw, 20px)/1 var(--serif); letter-spacing: .34em; margin-right: -.34em; white-space: nowrap; color: var(--ink); }
-  .mark { --mh: clamp(30px, 2.4vw, 40px); flex: none; height: var(--mh); width: calc(var(--mh) * 952 / 574); fill: currentColor; }
+  .mark { --mh: clamp(30px, 2.4vw, 40px); flex: none; height: var(--mh); width: calc(var(--mh) * 952 / 574); fill: currentColor; overflow: visible; }
   .nav { display: flex; align-items: center; gap: clamp(22px, 2.4vw, 46px); }
   .menu { display: flex; gap: clamp(22px, 2.4vw, 46px); margin: 0; padding: 0; list-style: none; }
   .menu a { font: 400 13px/1 var(--sans); letter-spacing: .02em; color: var(--ink-dim); padding-bottom: 5px; border-bottom: 1px solid transparent; transition: color .3s, border-color .3s; }
@@ -240,6 +260,41 @@
   .a-card p { margin: 0; font: 500 10px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-faint); white-space: nowrap; }
   .a-all { display: flex; justify-content: center; margin-top: clamp(40px, 6vh, 70px); }
 
+  /* philosophy: a short creed and four tenets */
+  .a-phil { padding: clamp(40px, 6vh, 80px) var(--gutter) clamp(70px, 10vh, 120px); max-width: 1440px; margin: 0 auto; }
+  .a-phil-head { max-width: 46em; margin-bottom: clamp(36px, 5.6vh, 64px); }
+  .a-phil-head .a-h { margin: 18px 0 clamp(16px, 2.4vh, 24px); }
+  .a-phil-head .a-sub { max-width: 36em; }
+  .a-tenets { list-style: none; margin: 0; padding: 0; counter-reset: tn; display: grid; grid-template-columns: repeat(4, 1fr); column-gap: clamp(20px, 3vw, 56px); }
+  .a-tenets li { counter-increment: tn; padding-top: clamp(20px, 3vh, 30px); border-top: 1px solid rgba(28, 26, 23, .16); }
+  .a-tenets li::before { content: counter(tn, decimal-leading-zero); display: block; margin-bottom: 18px; font: 500 10px/1 var(--sans); letter-spacing: .16em; font-variant-numeric: tabular-nums; color: var(--ink-faint); }
+  .a-tenets h3 { margin: 0 0 12px; font: 400 clamp(24px, 2vw, 32px)/1.1 var(--serif); color: var(--ink); }
+  .a-tenets p { margin: 0; font: 400 13.5px/1.65 var(--sans); color: var(--ink-dim); }
+
+  /* contact: the address, and a short form that writes the email for you */
+  .a-contact {
+    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(36px, 6vw, 110px); align-items: start;
+    padding: clamp(60px, 9vh, 110px) var(--gutter); max-width: 1440px; margin: 0 auto; border-top: 1px solid rgba(28, 26, 23, .16);
+  }
+  .a-contact .a-h { margin: 18px 0 clamp(16px, 2.4vh, 24px); }
+  .a-contact .a-sub { max-width: 26em; }
+  .a-mail { display: inline-block; margin-top: clamp(22px, 3.4vh, 34px); padding-bottom: 6px; font: 400 clamp(20px, 1.7vw, 28px)/1.2 var(--serif); color: var(--ink); border-bottom: 1px solid rgba(28, 26, 23, .35); transition: border-color .3s; overflow-wrap: anywhere; }
+  .a-mail:hover { border-color: var(--ink); }
+  .a-form { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 28px; }
+  .a-form .wide { grid-column: 1 / -1; }
+  .a-form label { display: grid; gap: 10px; }
+  .a-form label > span { font: 500 10px/1 var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--ink-dim); }
+  .a-form label em { font-style: normal; letter-spacing: .08em; text-transform: none; color: var(--ink-faint); }
+  .a-form input, .a-form textarea {
+    width: 100%; padding: 10px 0 12px; border: 0; border-bottom: 1px solid rgba(28, 26, 23, .3); border-radius: 0;
+    background: transparent; color: var(--ink); font: 400 16px/1.5 var(--sans); outline: none; resize: vertical; transition: border-color .3s;
+  }
+  .a-form input:focus, .a-form textarea:focus { border-color: var(--ink); }
+  .a-form .bad input, .a-form .bad textarea { border-color: #a2412f; }
+  .a-form-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 24px; margin-top: 6px; }
+  .a-form .a-pill { border: 0; cursor: pointer; }
+  .a-form-note { margin: 0; font: 400 12px/1.5 var(--sans); color: var(--ink-faint); }
+
   /* 3 · for founders, the two travellers walking on */
   .a-found {
     position: relative; text-align: center; min-height: clamp(640px, 100vh, 980px);
@@ -274,12 +329,16 @@
   @media (max-width: 900px) {
     .a-port-head { flex-direction: column; align-items: flex-start; }
     .a-grid { grid-template-columns: repeat(2, 1fr); }
+    .a-tenets { grid-template-columns: repeat(2, 1fr); row-gap: 34px; }
+    .a-contact { grid-template-columns: 1fr; }
     .a-foot { grid-template-columns: 1fr; justify-items: center; text-align: center; }
     .a-tag { justify-self: center; text-align: center; }
   }
   @media (max-width: 560px) {
     .sound.lift { bottom: 150px; }                           /* the stacked footer is taller on phones */
     .a-grid { grid-template-columns: 1fr; }
+    .a-tenets { grid-template-columns: 1fr; }
+    .a-form { grid-template-columns: 1fr; }
     .a-nav { flex-wrap: wrap; justify-content: center; }
   }
 
@@ -307,10 +366,19 @@
 </style>
 </head>
 <body>
-<!-- the Origin Capital mark: two pillars, a doorway, standing on the horizon -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="oc-mark" viewBox="-476 0 952 574">
-  <polygon points="-476,574 -98,563.5 -93,.5 -57,39 -53,574"/><polygon points="476,574 98,563.5 93,.5 57,39 53,574"/>
-</symbol></svg>
+<!-- the Origin Capital mark: two pillars, a doorway, standing on the horizon, with light pooling at the
+     corners where each pillar meets the horizon (the aura is drawn behind the stems and spills past the box) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- white light at the outer foot of each pillar (kept out of the doorway itself) -->
+    <radialGradient id="oc-aura"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".3" stop-color="#fff" stop-opacity=".2"/><stop offset=".65" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <clipPath id="oc-aura-out"><rect x="-700" y="-200" width="647" height="1000"/><rect x="53" y="-200" width="647" height="1000"/><rect x="-700" y="574" width="1400" height="300"/></clipPath>
+  </defs>
+  <symbol id="oc-mark" viewBox="-476 0 952 574" overflow="visible">
+    <g clip-path="url(#oc-aura-out)"><ellipse cx="-102" cy="560" rx="150" ry="95" fill="url(#oc-aura)"/><ellipse cx="102" cy="560" rx="150" ry="95" fill="url(#oc-aura)"/></g>
+    <polygon points="-476,574 -98,563.5 -93,.5 -57,39 -53,574"/><polygon points="476,574 98,563.5 93,.5 57,39 53,574"/>
+  </symbol>
+</svg>
 <div class="journey" id="journey">
 <section class="hero" id="hero">
   <canvas class="film" id="film" aria-hidden="true"></canvas>
@@ -330,13 +398,12 @@
       <div class="nav">
         <nav aria-label="Primary">
           <ul class="menu">
-            <li><a href="#">Philosophy</a></li>
-            <li><a href="#" aria-current="page">Portfolio</a></li>
-            <li><a href="#">People</a></li>
-            <li><a href="#">Insights</a></li>
+            <li><a href="#philosophy">Philosophy</a></li>
+            <li><a href="#portfolio">Portfolio</a></li>
+            <li><a href="#contact">Contact</a></li>
           </ul>
         </nav>
-        <a class="cta" href="mailto:hello@origincapital.com">Get in touch</a>
+        <a class="cta" href="#contact">Get in touch</a>
       </div>
     </header>
 
@@ -345,7 +412,7 @@
         <div class="eyebrow rise d1">Our Belief</div>
         <h1 class="rise d2">Different centuries.<br>Same kind of people.</h1>
         <p class="lede rise d3">We find the rare few who shape what comes next.</p>
-        <a class="explore rise d4" href="#">Explore Portfolio <i></i>
+        <a class="explore rise d4" href="#portfolio">Explore Portfolio <i></i>
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2 8h12M9.5 3.5 14 8l-4.5 4.5"/></svg></a>
       </main>
       <ol class="years rise d4" id="years" aria-label="Eras"></ol>
@@ -364,8 +431,22 @@
     <p class="a-sub">We invest at the earliest stages in exceptional people pursuing consequential ideas.</p>
     <div class="a-actions">
       <a class="a-pill" href="#portfolio">Meet the founders we back <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2 8h12M9.5 3.5 14 8l-4.5 4.5"/></svg></a>
-      <a class="a-link" href="mailto:hello@origincapital.com"><span>Tell us what you are building</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2 8h12M9.5 3.5 14 8l-4.5 4.5"/></svg></a>
+      <a class="a-link" href="#contact"><span>Tell us what you are building</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2 8h12M9.5 3.5 14 8l-4.5 4.5"/></svg></a>
     </div>
+  </section>
+
+  <section class="a-phil" id="philosophy">
+    <div class="a-phil-head">
+      <span class="a-eyebrow a-dash">Philosophy</span>
+      <h2 class="a-h">History is made by<br>a handful of people.</h2>
+      <p class="a-sub">Rome, Florence, Los Alamos, Starbase. Every era’s turning point traces back to a few individuals with unusual conviction. The centuries change; the people don’t. Our work is to recognise them early, and to stand beside them for the long run.</p>
+    </div>
+    <ol class="a-tenets">
+      <li><h3>People before markets.</h3><p>We back the person first. Great founders find the market, reshape it, or create one that did not exist.</p></li>
+      <li><h3>The earliest conviction.</h3><p>We invest before the evidence is obvious, when belief matters most and capital is hardest to find.</p></li>
+      <li><h3>Consequential ideas.</h3><p>We look for work that changes what is possible, across AI, science, infrastructure and the frontiers that come after them.</p></li>
+      <li><h3>Long horizons.</h3><p>History is written over decades. We build relationships to match: candid, patient, and in it for what comes next.</p></li>
+    </ol>
   </section>
 
   <section class="a-port" id="portfolio">
@@ -390,17 +471,35 @@
       <li class="a-card"><h3>Rove</h3><p>Seed</p></li>
       <li class="a-card"><h3>Linq</h3><p>Seed</p></li>
     </ul>
-    <div class="a-all"><a class="a-link" href="#"><span>View all portfolio companies</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2 8h12M9.5 3.5 14 8l-4.5 4.5"/></svg></a></div>
+  </section>
+
+  <section class="a-contact" id="contact">
+    <div class="a-contact-copy">
+      <span class="a-eyebrow a-dash">Contact</span>
+      <h2 class="a-h">Get in touch.</h2>
+      <p class="a-sub">Founders, co-investors, and anyone building something that should exist: tell us about it. Every message is read.</p>
+      <a class="a-mail" href="mailto:marc@zeroquadrillion.ai?subject=Origin%20Capital%20inquiry">marc@zeroquadrillion.ai</a>
+    </div>
+    <form class="a-form" id="contactForm" novalidate>
+      <label><span>Name</span><input name="name" autocomplete="name" required></label>
+      <label><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
+      <label class="wide"><span>Company <em>(optional)</em></span><input name="company" autocomplete="organization"></label>
+      <label class="wide"><span>What are you building?</span><textarea name="message" rows="4" required></textarea></label>
+      <div class="a-form-foot wide">
+        <button class="a-pill" type="submit">Send inquiry <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2 8h12M9.5 3.5 14 8l-4.5 4.5"/></svg></button>
+        <p class="a-form-note" id="formNote">Opens your email app with your message to marc@zeroquadrillion.ai.</p>
+      </div>
+    </form>
   </section>
 
   <section class="a-found">
     <span class="a-eyebrow a-dash">For founders</span>
     <h2 class="a-h">Building something<br>that should exist?</h2>
     <p class="a-sub">We invest at the earliest stages in exceptional people pursuing consequential ideas.</p>
-    <a class="a-pill" href="mailto:hello@origincapital.com">Tell us what you are building <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2 8h12M9.5 3.5 14 8l-4.5 4.5"/></svg></a>
+    <a class="a-pill" href="#contact">Tell us what you are building <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2 8h12M9.5 3.5 14 8l-4.5 4.5"/></svg></a>
     <footer class="a-foot" id="aFoot">
       <span class="a-brand"><svg class="mark" aria-hidden="true"><use href="#oc-mark"/></svg><span>ORIGIN CAPITAL</span></span>
-      <nav class="a-nav" aria-label="Footer"><a href="#portfolio">Portfolio</a><a href="#">Philosophy</a><a href="#">Team</a><a href="#">Insights</a><a href="mailto:hello@origincapital.com">Contact</a></nav>
+      <nav class="a-nav" aria-label="Footer"><a href="#philosophy">Philosophy</a><a href="#portfolio">Portfolio</a><a href="#contact">Contact</a><a href="mailto:marc@zeroquadrillion.ai">marc@zeroquadrillion.ai</a></nav>
       <span class="a-tag">Different centuries.<br>Same kind of people.</span>
     </footer>
   </section>
@@ -601,7 +700,6 @@
     set(tlFill, 'transform', `scaleX(${(fill / (n - 1)).toFixed(4)})`);
     if (f > FILM.frames - 30) era = -1;                           // he's walking into the light
     setEra(era);
-    music.at(p < START ? -1 : f, p >= WHITE - .001);
     const arrived = paper >= .97;
     afterEl.classList.toggle('arrived', arrived);
     soundBtn.classList.toggle('compact', arrived);
@@ -640,118 +738,65 @@
   });
 
   // ---------- music: Stravinsky, The Firebird (1919 suite), VI. Finale ----------
-  // Music can't be scrubbed like frames, so it plays at its own pace, but it is pinned to the film's key
-  // moments: when the scroll reaches one, the music cuts forward to its accent at that instant, however fast
-  // you scroll. Hits only move the music forward, so it never replays a passage; linger and it plays on.
-  // [part, frame within that part, music seconds]; part −1 is the flight through the portal, 0… are the scenes
-  const HITS = [
-    [-1, 58, 29.0],    // crossing the portal's glowing threshold: the first big accent
-    [0, 30, 38.6],     // Caesar appears in the blazing doorway
-    [0, 120, 57.7],    // Caesar strides down the aisle: the full theme
-    [1, 62, 64.7],     // the Renaissance arch opens
-    [1, 110, 78.7],    // Lorenzo studies the drawing
-    [2, 55, 84.0],     // the drawing becomes the Los Alamos blackboard
-    [2, 143, 103.3],   // the Trinity flash and fireball: the biggest surge in the piece (1:43.5)
-    [3, 20, 110.6],    // the rocket emerges from the white
-    [3, 88, 124.8],    // liftoff (2:05)
-    [4, 110, 171.2],   // the traveller walks into the light (2:51)
-  ];
-  const END_HIT = 192.4;                     // the end screen: the grand pause, then the final chords (3:12.5)
-  const HUSH = [[94.6, 102.9]];              // the near-silent passage before the surge: never dwell in it
-  const music = (() => {
+  // Off until the visitor turns it on. Then it plays from 2:05 (the liftoff surge) and simply keeps going,
+  // whatever the scroll does; at the end of the track it picks up at 2:05 again. Off pauses it; on resumes.
+  const MUSIC_FROM = 125;
+  (() => {
     const btn = document.getElementById('sound'), lbl = btn.querySelector('.lbl');
-    // sound is on by default (a visitor's choice to turn it off is remembered); `playing` is whether the
-    // browser has actually let it start yet
-    let on = true;
-    try { on = localStorage.getItem('origin-sound') !== 'off'; } catch (e) {}
-    let ctx, master, decks = [], live = 0, playing = false, lastF = -1, lastEnd = false, hitTimer = 0, wanted = -1;
-    const hits = () => HITS.map(([part, at, t]) => [(part < 0 ? 0 : FILM.eras[part].start) + at, t]);
-    function deck() {
-      const a = new Audio('film/audio/firebird-finale.m4a');
-      a.preload = 'auto';
-      const g = ctx.createGain(); g.gain.value = 0;
-      ctx.createMediaElementSource(a).connect(g).connect(master);
-      return { a, g };
-    }
-    const ramp = (g, v, t) => { g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setTargetAtTime(v, ctx.currentTime, t / 3); };
-    const now = () => decks[live].a.currentTime;
-    const ended = () => decks[live].a.ended || decks[live].a.paused;
-    function cut(t, punch) {
-      const cur = decks[live], next = decks[1 - live];
-      next.a.currentTime = t;
-      next.a.play().catch(() => {});
-      ramp(next.g, 1, punch ? .25 : .9); ramp(cur.g, 0, punch ? .7 : 1.1);
-      setTimeout(() => { if (decks[live] !== cur) cur.a.pause(); }, 1300);
-      live = 1 - live;
-    }
-    // where the music belongs for a given place in the film: the latest hit at or before it
-    const placeFor = (f, end) => end ? END_HIT : p0(f);
-    function p0(f) { let t = 0; for (const [hf, ht] of hits()) if (f >= hf) t = ht; return t; }
-    function hitLater(t) {                      // debounce: a fast scroll across several hits makes one cut
-      wanted = Math.max(wanted, t);
-      clearTimeout(hitTimer);
-      hitTimer = setTimeout(() => { if (playing && (now() < wanted - .4 || ended())) cut(wanted, true); wanted = -1; }, 90);
-    }
-    setInterval(() => {                         // skip the hush if the music drifts into it on its own
-      if (!playing) return;
-      const t = now();
-      for (const [a, b] of HUSH) if (t > a && t < b) cut(b, false);
-    }, 250);
-    function start() {
-      if (!ctx) {
+    let on = false, ctx, gain, a;
+    const fadeTo = (v, t) => { gain.gain.cancelScheduledValues(ctx.currentTime); gain.gain.setTargetAtTime(v, ctx.currentTime, t / 3); };
+    function play() {
+      if (!a) {
+        a = new Audio('film/audio/firebird-finale.m4a');
+        a.preload = 'auto';
+        a.addEventListener('ended', () => { a.currentTime = MUSIC_FROM; if (on) a.play().catch(() => {}); });
+        // volume goes through Web Audio: iOS ignores <audio>.volume
         ctx = new (window.AudioContext || window.webkitAudioContext)();
-        master = ctx.createGain(); master.gain.value = .45; master.connect(ctx.destination);
-        decks = [deck(), deck()];
+        gain = ctx.createGain(); gain.gain.value = 0;
+        ctx.createMediaElementSource(a).connect(gain).connect(ctx.destination);
+        a.currentTime = MUSIC_FROM;
       }
       ctx.resume();
-      const d = decks[live], want = lastF < 0 ? 0 : placeFor(lastF, lastEnd);
-      if (d.a.ended || d.a.currentTime < want - .4 || d.a.currentTime === 0) d.a.currentTime = want;
-      d.a.play().then(() => { if (!on) return; ramp(d.g, 1, .8); setPlaying(true); }, () => setPlaying(false));
+      a.play().then(() => { if (on) fadeTo(.45, .8); }, () => { on = false; render(); });
     }
-    function stop() {
-      setPlaying(false);
-      decks.forEach(d => ramp(d.g, 0, .5));
-      setTimeout(() => { if (!on) decks.forEach(d => d.a.pause()); }, 700);
+    function pause() {
+      if (!a) return;
+      fadeTo(0, .4);
+      setTimeout(() => { if (!on) a.pause(); }, 500);
     }
-    function setPlaying(v) { playing = v; btn.classList.toggle('playing', v); }
     function render() {
       btn.classList.toggle('on', on);
+      btn.classList.toggle('playing', on);
       btn.setAttribute('aria-pressed', on);
       lbl.textContent = on ? 'Sound on' : 'Sound off';
     }
-    btn.addEventListener('click', () => {
-      if (on && !playing) { start(); return; }      // on, but the browser hadn't let it start yet
-      on = !on;
-      try { localStorage.setItem('origin-sound', on ? 'on' : 'off'); } catch (e) {}
-      render();
-      on ? start() : stop();
-    });
-    // Browsers only allow sound after a first click, tap or key press (scrolling doesn't count), so while
-    // sound is on but blocked, the visitor's first such gesture anywhere starts it.
-    const unlock = e => { if (on && !playing && !btn.contains(e.target)) start(); };
-    ['pointerdown', 'keydown', 'touchend'].forEach(t => addEventListener(t, unlock, { capture: true, passive: true }));
+    btn.addEventListener('click', () => { on = !on; render(); on ? play() : pause(); });
     render();
-    if (on) start();                                // starts at once wherever the browser allows it
-    return {
-      // called every camera frame with the film position; f < 0 while the hero is still up
-      at(f, end) {
-        const prev = lastF, prevEnd = lastEnd;
-        lastF = f; lastEnd = end;
-        if (!playing || f === prev && end === prevEnd) return;
-        if (end && !prevEnd) { if (now() < END_HIT - .4 || ended()) hitLater(END_HIT); return; }
-        if (f > prev) {                          // moving forward: fire the last hit we crossed
-          let t = -1;
-          for (const [hf, ht] of hits()) if (prev < hf && f >= hf) t = ht;
-          if (t >= 0) hitLater(t);
-        } else if (ended() && f >= 0) hitLater(placeFor(f, end));   // music ran out and they scrolled back
-      },
-    };
   })();
 
   const soundBtn = document.getElementById('sound');
   new IntersectionObserver(([e]) => soundBtn.classList.toggle('lift', e.isIntersecting)).observe(document.getElementById('aFoot'));
   if (!filmOn) new IntersectionObserver(([e]) => soundBtn.classList.toggle('compact', e.isIntersecting), { rootMargin: '0px 0px -40% 0px' })
     .observe(document.getElementById('after'));
+
+  // ---------- contact form: composes an email to Marc in the visitor's mail app (no server needed) ----------
+  const form = document.getElementById('contactForm');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const v = n => form.elements[n].value.trim();
+    let ok = true;
+    for (const n of ['name', 'email', 'message']) {
+      const bad = !v(n) || (n === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v(n)));
+      form.elements[n].closest('label').classList.toggle('bad', bad);
+      if (bad) ok = false;
+    }
+    const note = document.getElementById('formNote');
+    if (!ok) { note.textContent = 'Please add your name, a valid email, and a few words about what you are building.'; return; }
+    const subject = `Origin Capital inquiry: ${v('name')}${v('company') ? ' (' + v('company') + ')' : ''}`;
+    const body = `${v('message')}\n\n${v('name')}\n${v('email')}${v('company') ? '\n' + v('company') : ''}`;
+    location.href = `mailto:marc@zeroquadrillion.ai?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    note.textContent = 'Your email app should open with the message ready to send. If it doesn’t, write to marc@zeroquadrillion.ai.';
+  });
 
   // ---------- layout & loop ----------
   function layout() {
