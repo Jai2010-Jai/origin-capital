@@ -6,12 +6,12 @@
     <mask id="m" maskUnits="userSpaceOnUse" x="-600" y="-300" width="1200" height="1200"><rect x="-600" y="-300" width="1200" height="1200" fill="url(#feather)"/></mask>
     <filter id="bloom" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="16"/></filter>
     <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter>
-  <clipPath id="out"><rect x="-500" y="-170" width="447" height="1000"/><rect x="53" y="-170" width="447" height="1000"/><rect x="-500" y="574" width="1000" height="260"/></clipPath></defs>
+  <clipPath id="out"><rect x="-500" y="-170" width="447" height="744"/><rect x="53" y="-170" width="447" height="744"/></clipPath><clipPath id="above"><rect x="-500" y="-170" width="1000" height="744"/></clipPath></defs>
   <rect x="-500" y="-170" width="1000" height="1000" fill="url(#bg)"/>
   <g clip-path="url(#out)"><ellipse cx="-102" cy="560" rx="150" ry="95" fill="url(#haze)"/>
   <ellipse cx="102" cy="560" rx="150" ry="95" fill="url(#haze)"/></g>
   <g mask="url(#m)">
-    <path filter="url(#bloom)" fill="#fff" fill-opacity=".45" d="M-476,574 L-98,563.5 L-93,.5 L-57,39 L-53,574Z M476,574 L98,563.5 L93,.5 L57,39 L53,574Z"/>
-    <path filter="url(#soft)" fill="#f6f3ec" d="M-476,574 L-98,563.5 L-93,.5 L-57,39 L-53,574Z M476,574 L98,563.5 L93,.5 L57,39 L53,574Z"/>
+    <path clip-path="url(#above)" filter="url(#bloom)" fill="#fff" fill-opacity=".45" d="M-476,574 L-98,563.5 L-93,.5 L-57,39 L-53,574Z M476,574 L98,563.5 L93,.5 L57,39 L53,574Z"/>
+    <path clip-path="url(#above)" filter="url(#soft)" fill="#f6f3ec" d="M-476,574 L-98,563.5 L-93,.5 L-57,39 L-53,574Z M476,574 L98,563.5 L93,.5 L57,39 L53,574Z"/>
   </g>
 </svg>
