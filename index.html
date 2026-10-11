@@ -48,10 +48,15 @@
   a { color: inherit; text-decoration: none; }
 
   .hero {
-    position: relative; height: 100vh; height: 100dvh; min-height: 560px;   /* dvh: tracks the phone's toolbar, so no strip opens below */
+    position: relative; height: 100vh; height: 100lvh; min-height: 560px;
+    /* lvh: the full screen with the phone's toolbar hidden. It never changes as the toolbar slides in and out,
+       so nothing re-lays out (or flashes a strip) mid-scroll; --tb lifts the bottom-anchored bits clear of the toolbar */
+    --tb: 0px;
     overflow: hidden; isolation: isolate;
     background: #ece4d6 url(film/intro/end.webp) center / cover no-repeat;   /* the empty portal, until frames decode */
   }
+
+  @supports (height: 100lvh) { .hero { --tb: calc(100lvh - 100svh); } }
 
   /* ---------- the opening film: two people walk into the portal (plays by itself) ---------- */
   .intro {
@@ -78,8 +83,6 @@
   }
   .brand { display: inline-flex; align-items: center; gap: clamp(12px, 1vw, 18px); font: 500 clamp(15px, 1.15vw, 20px)/1 var(--serif); letter-spacing: .34em; margin-right: -.34em; white-space: nowrap; color: var(--ink); }
   .mark { --mh: clamp(30px, 2.4vw, 40px); flex: none; height: var(--mh); width: calc(var(--mh) * 952 / 574); fill: currentColor; overflow: visible; }
-  /* the mark's glow: a light ink haze on paper (default); on a dark ground add .mark-glow for the full white light */
-  .mark-glow { --mark-haze: .4; --mark-bloom: .27; }
   .nav { display: flex; align-items: center; gap: clamp(22px, 2.4vw, 46px); }
   .menu { display: flex; gap: clamp(22px, 2.4vw, 46px); margin: 0; padding: 0; list-style: none; }
   .menu a { font: 400 13px/1 var(--sans); letter-spacing: .02em; color: var(--ink-dim); padding-bottom: 5px; border-bottom: 1px solid transparent; transition: color .3s, border-color .3s; }
@@ -103,13 +106,13 @@
   .explore:hover i { width: 48px; }
   .explore svg { width: 13px; height: 13px; }
   .years {
-    position: absolute; left: var(--gutter); bottom: clamp(26px, 4.6vh, 50px); margin: 0; padding: 0; list-style: none;
+    position: absolute; left: var(--gutter); bottom: calc(clamp(26px, 4.6vh, 50px) + var(--tb)); margin: 0; padding: 0; list-style: none;
     display: flex; align-items: center; gap: 14px; font: 500 10px/1 var(--sans); letter-spacing: .18em; color: var(--ink);
   }
   .years li { display: flex; align-items: center; gap: 14px; }
   .years li + li::before { content: ""; width: clamp(22px, 3vw, 46px); height: 1px; background: rgba(27, 25, 22, .45); }
   .cue {
-    position: absolute; right: var(--gutter); bottom: clamp(24px, 4.4vh, 48px);
+    position: absolute; right: var(--gutter); bottom: calc(clamp(24px, 4.4vh, 48px) + var(--tb));
     display: grid; justify-items: center; gap: 10px; font: 400 11px/1 var(--sans); letter-spacing: .04em; color: var(--ink);
     background: none; border: 0; padding: 0; cursor: pointer;
   }
@@ -165,7 +168,7 @@
   .tl-era .yr { font: 500 11px/1 var(--sans); letter-spacing: .3em; margin-right: -.3em; text-transform: uppercase; color: rgba(238, 232, 221, .82); }
   /* the scene's line, set low like a subtitle */
   .tl-line {
-    position: absolute; z-index: 3; left: 50%; bottom: clamp(30px, 7vh, 72px); transform: translateX(-50%);
+    position: absolute; z-index: 3; left: 50%; bottom: calc(clamp(30px, 7vh, 72px) + var(--tb)); transform: translateX(-50%);
     opacity: 0; pointer-events: none;
     width: min(90vw, 760px); margin: 0; text-align: center; white-space: pre-line;
     font: italic 400 clamp(20px, 1.9vw, 32px)/1.3 var(--serif); color: var(--ivory);
@@ -195,7 +198,7 @@
     background: #0d0c0b; border: 1px solid rgba(238, 232, 221, .55);
     transition: background .5s, border-color .5s, transform .5s, box-shadow .5s;
   }
-  .tl-rail .lb { font: 500 11px/1 var(--sans); letter-spacing: .14em; white-space: nowrap; color: rgba(238, 232, 221, .55); text-shadow: 0 1px 8px rgba(0,0,0,.6); transition: color .5s; }
+  .tl-rail .lb { font: 500 11px/1 var(--sans); letter-spacing: .14em; white-space: nowrap; color: rgba(238, 232, 221, .78); text-shadow: 0 1px 6px rgba(0,0,0,.75), 0 0 2px rgba(0,0,0,.45); transition: color .5s; }   /* readable over a bright doorway too */
   .tl-rail .past .dot { background: var(--champagne); border-color: var(--champagne); }
   .tl-rail .past .lb { color: rgba(238, 232, 221, .78); }
   .tl-rail .now .dot { background: var(--ivory); border-color: var(--ivory); transform: scale(1.4); box-shadow: 0 0 14px rgba(255, 238, 210, .7); }
@@ -344,6 +347,10 @@
     .a-nav { flex-wrap: wrap; justify-content: center; }
   }
 
+  @media (max-width: 360px) {
+    .brand > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }   /* the mark alone */
+  }
+
   /* entrance */
   .rise { opacity: 0; transform: translateY(14px); transition: opacity 1.2s ease, transform 1.4s cubic-bezier(.2,.7,.2,1); }
   .loaded .rise { opacity: 1; transform: none; }
@@ -358,6 +365,8 @@
     .explore { margin-top: 18px; }
     .years { display: none; }
     .cta { padding: 10px 16px; font-size: 12px; }
+    .brand { gap: 10px; font-size: 13px; letter-spacing: .2em; margin-right: -.2em; }
+    .brand .mark { --mh: 24px; }
     .shade { background: linear-gradient(to bottom, rgba(248, 243, 234, .85) 0%, rgba(248, 243, 234, .6) 30%, rgba(248, 243, 234, 0) 52%); }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -368,26 +377,20 @@
 </style>
 </head>
 <body>
-<!-- the Origin Capital mark: two pillars, a doorway, standing on the horizon. As in the design, light pools at
-     the outer foot of each pillar, the pillars bloom softly and their tops fade out. Every effect is drawn in the
-     mark's own colour (currentColor), so it is a white glow on a dark ground and a soft ink haze on paper. -->
+<!-- the Origin Capital mark: two pillars, a doorway, standing on the horizon. As in the design, a soft haze pools at
+     the outer foot of each pillar (only above the horizon, never inside the doorway) and the pillars' tops fade out.
+     Drawn with plain gradients in the site's ink, so every browser renders it the same, phones included. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <filter id="oc-haze" filterUnits="userSpaceOnUse" x="-900" y="-400" width="1800" height="1400"><feGaussianBlur stdDeviation="34"/></filter>
-    <filter id="oc-bloom" filterUnits="userSpaceOnUse" x="-900" y="-400" width="1800" height="1400"><feGaussianBlur stdDeviation="16"/></filter>
-    <linearGradient id="oc-fade" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="574"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".11" stop-color="#fff"/></linearGradient>
-    <mask id="oc-tops" maskUnits="userSpaceOnUse" x="-900" y="-400" width="1800" height="1400"><rect x="-900" y="-400" width="1800" height="1400" fill="url(#oc-fade)"/></mask>
-    <!-- the pooled light sits only in the outer corners: above the horizon (y 574), outside the doorway -->
+    <radialGradient id="oc-haze"><stop offset="0" stop-color="#1b1916" stop-opacity=".17"/><stop offset=".45" stop-color="#1b1916" stop-opacity=".08"/><stop offset=".8" stop-color="#1b1916" stop-opacity=".015"/><stop offset="1" stop-color="#1b1916" stop-opacity="0"/></radialGradient>
+    <linearGradient id="oc-stem" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="574"><stop offset="0" stop-color="#1b1916" stop-opacity=".22"/><stop offset=".11" stop-color="#1b1916"/></linearGradient>
     <clipPath id="oc-out"><rect x="-900" y="-400" width="847" height="974"/><rect x="53" y="-400" width="847" height="974"/></clipPath>
-    <!-- nothing is drawn below the horizon: the bloom stops at the line -->
-    <clipPath id="oc-above"><rect x="-900" y="-400" width="1800" height="974"/></clipPath>
   </defs>
   <symbol id="oc-mark" viewBox="-476 0 952 574" overflow="visible">
-    <g clip-path="url(#oc-out)"><g filter="url(#oc-haze)" style="opacity: var(--mark-haze, .21)"><ellipse cx="-118" cy="560" rx="105" ry="62"/><ellipse cx="118" cy="560" rx="105" ry="62"/></g></g>
-    <g mask="url(#oc-tops)">
-      <path clip-path="url(#oc-above)" filter="url(#oc-bloom)" style="opacity: var(--mark-bloom, .11)" d="M-476,574 L-98,563.5 L-93,.5 L-57,39 L-53,574Z M476,574 L98,563.5 L93,.5 L57,39 L53,574Z"/>
-      <path d="M-476,574 L-98,563.5 L-93,.5 L-57,39 L-53,574Z M476,574 L98,563.5 L93,.5 L57,39 L53,574Z"/>
+    <g clip-path="url(#oc-out)">
+      <ellipse cx="-118" cy="560" rx="170" ry="120" fill="url(#oc-haze)"/><ellipse cx="118" cy="560" rx="170" ry="120" fill="url(#oc-haze)"/>
     </g>
+    <path fill="url(#oc-stem)" d="M-476,574 L-98,563.5 L-93,.5 L-57,39 L-53,574Z M476,574 L98,563.5 L93,.5 L57,39 L53,574Z"/>
   </symbol>
 </svg>
 <div class="journey" id="journey">
@@ -740,8 +743,16 @@
   } else {
     intro.addEventListener('ended', finishIntro);
     intro.addEventListener('error', finishIntro, true);
-    const go = () => intro.play().catch(finishIntro);             // autoplay refused: rest on the empty portal
-    intro.readyState >= 2 ? go() : intro.addEventListener('canplay', go, { once: true });
+    // play() at once: it is what starts the download on phones that never preload. If the phone refuses to
+    // autoplay (iOS Low Power Mode does), the first tap plays it; scrolling on still skips it as before.
+    // Still not moving after 7s and nobody has tapped: rest on the empty portal rather than a frozen poster.
+    let refused = false;
+    const retry = () => { if (!introDone) intro.play().catch(finishIntro); };
+    intro.play().catch(() => {
+      refused = true;
+      ['touchend', 'click'].forEach(t => addEventListener(t, retry, { once: true, passive: true }));
+    });
+    setTimeout(() => { if (!introDone && !refused && intro.currentTime === 0) finishIntro(); }, 7000);
   }
   document.getElementById('cue').addEventListener('click', () => {
     if (!introDone) finishIntro();
