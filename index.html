@@ -150,10 +150,10 @@
   .sound.away { opacity: 0; transform: translate3d(0, 10px, 0); pointer-events: none;
     transition: bottom .6s cubic-bezier(.2, .7, .2, 1), opacity .5s ease, transform .5s ease; }
   /* in the timeline it takes centre stage, just under each scene's subtitle, a little larger: it is part of the story.
-     Centred with auto margins and a solid backing, not a transform or backdrop blur: iOS Safari can skip painting a
-     fixed element with those over the constantly redrawn film canvas. */
+     It moves inside the film (the hero) for this and is placed exactly like the subtitle, lifted by --tb: a fixed
+     button near the bottom is covered by Safari's toolbar on iPhone while scrolling down. */
   .sound.stage {
-    left: 0; right: 0; margin: 0 auto; width: max-content; bottom: clamp(26px, 5vh, 56px);
+    position: absolute; z-index: 6; left: 0; right: 0; margin: 0 auto; width: max-content; bottom: calc(clamp(26px, 5vh, 56px) + var(--tb));
     gap: 12px; padding: 12px 20px 12px 16px; font-size: 11px;
     background: rgba(16, 14, 12, .62); border-color: rgba(255, 255, 255, .3);
   }
@@ -834,10 +834,13 @@
   // Without the film (no frames) it simply shows.
   let inTimeline = !filmOn;
   function show() {
-    const away = !(inTimeline || sound.on);
+    const away = !(inTimeline || sound.on), stage = inTimeline && filmOn;
+    // in the film it lives inside the hero (positioned like the subtitles); elsewhere it is a fixed corner button
+    const home = stage ? hero : document.body;
+    if (soundBtn.parentNode !== home) home.appendChild(soundBtn);
     soundBtn.classList.toggle('away', away);
     soundBtn.tabIndex = away ? -1 : 0; soundBtn.setAttribute('aria-hidden', away);   // invisible, so out of reach too
-    soundBtn.classList.toggle('stage', inTimeline && filmOn);   // centred under the subtitles while in the film
+    soundBtn.classList.toggle('stage', stage);                  // centred under the subtitles while in the film
   }
   show();
   new IntersectionObserver(([e]) => soundBtn.classList.toggle('lift', e.isIntersecting)).observe(document.getElementById('aFoot'));
