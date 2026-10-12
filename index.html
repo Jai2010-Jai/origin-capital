@@ -146,6 +146,9 @@
   .sound.compact { left: auto; right: var(--gutter); padding: 11px; }
   .sound.compact .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   /* off the opening screen (and the page after the film) unless the music is on */
+  /* while the toggle shows in its corner on the opening screen (music on), the year row makes room for it */
+  .years { transition: left .5s cubic-bezier(.2, .7, .2, 1); }
+  .sound-corner .years { left: calc(var(--gutter) + 160px); }
   /* hidden by opacity only (no visibility switch), so the layer stays alive and Safari just fades it */
   .sound.away { opacity: 0; transform: translate3d(0, 10px, 0); pointer-events: none;
     transition: bottom .6s cubic-bezier(.2, .7, .2, 1), opacity .5s ease, transform .5s ease; }
@@ -773,14 +776,14 @@
   }
   document.getElementById('cue').addEventListener('click', () => {
     if (!introDone) finishIntro();
-    scrollTo({ top: jTop + jSpan * (START + .02), behavior: 'smooth' });
+    lastDir = 1; glideTo(stopYs()[1]);                               // straight to the first era
   });
 
   // ---------- music: Stravinsky, The Firebird (1919 suite), VI. Finale ----------
   // Off until the visitor turns it on (the toggle only appears once they are in the timeline). Then it swells in
   // slowly from 2:20 and simply keeps going, whatever the scroll does; at the end of the track it picks up at 2:20
   // again. Off fades it out and pauses it; on resumes.
-  const MUSIC_FROM = 140, VOLUME = .29;           // 2:20; about 35% quieter than the original .45
+  const MUSIC_FROM = 140, VOLUME = .17;           // 2:20; 60% of the earlier .29
   const SWELL = 3;                                // seconds to come up to full volume
   const sound = (() => {
     const btn = document.getElementById('sound'), lbl = btn.querySelector('.lbl');
@@ -841,6 +844,7 @@
     soundBtn.classList.toggle('away', away);
     soundBtn.tabIndex = away ? -1 : 0; soundBtn.setAttribute('aria-hidden', away);   // invisible, so out of reach too
     soundBtn.classList.toggle('stage', stage);                  // centred under the subtitles while in the film
+    document.documentElement.classList.toggle('sound-corner', !away && !stage);
   }
   show();
   new IntersectionObserver(([e]) => soundBtn.classList.toggle('lift', e.isIntersecting)).observe(document.getElementById('aFoot'));
@@ -898,6 +902,55 @@
   function kick() { if (!raf) raf = requestAnimationFrame(tick); }
 
   if (filmOn) addEventListener('scroll', kick, { passive: true });
+
+  // ---------- era stops ----------
+  // The film never rests mid-transition. When the visitor stops scrolling inside it, it glides on to the next stop
+  // in the direction they were going (or back to the nearest one), playing the film at an even pace on the way.
+  // A stop is a settled moment of each era; the opening screen and the arrival on the page below are stops too.
+  // Any touch, wheel or key hands control straight back. Below the film the page scrolls freely.
+  const STOPS = [259, 436, 580, 698, 841];                // Caesar strides, Lorenzo's drawing, the lab, liftoff, the doorway
+  const stopYs = () => [jTop, ...STOPS.map(f => jTop + jSpan * (START + f / (FILM.frames - 1) * (END - START))), jTop + jSpan];
+  let glide = 0, touching = false, settleT = 0, lastY = scrollY, lastDir = 0;
+  const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  function glideTo(y) {
+    cancelAnimationFrame(glide);
+    const y0 = scrollY, dy = y - y0;
+    if (Math.abs(dy) < 2) return;
+    const frames = Math.abs(dy) / jSpan * FILM.frames;              // film frames the glide will play through
+    const dur = Math.min(2600, Math.max(700, frames / 110 * 1000)); // ~110 frames a second: brisk, but every frame shows
+    const t0 = performance.now();
+    let set = y0;
+    const step = now => {
+      if (Math.abs(scrollY - set) > 2) { glide = 0; return; }       // something else moved the page (a link, a jump): let it
+      const x = Math.min(1, (now - t0) / dur);
+      set = Math.round(y0 + dy * ease(x));
+      scrollTo(0, set);
+      glide = x < 1 ? requestAnimationFrame(step) : 0;
+    };
+    glide = requestAnimationFrame(step);
+  }
+  function settle() {
+    if (touching || glide || reduced) return;
+    const y = scrollY, ys = stopYs();
+    if (y >= ys[ys.length - 1] - 2) return;                         // the page below the film scrolls freely
+    if (ys.some(s => Math.abs(s - y) < 3)) return;                  // already at a stop
+    const next = lastDir > 0 ? ys.find(s => s > y) : lastDir < 0 ? [...ys].reverse().find(s => s < y)
+      : ys.reduce((a, b) => Math.abs(b - y) < Math.abs(a - y) ? b : a);
+    if (next !== undefined) glideTo(next);
+  }
+  if (filmOn) {
+    addEventListener('scroll', () => {
+      if (!glide) { const y = scrollY; if (y !== lastY) lastDir = Math.sign(y - lastY); lastY = y; }
+      else lastY = scrollY;
+      clearTimeout(settleT); settleT = setTimeout(settle, 140);     // once the scroll (and any momentum) has stopped
+    }, { passive: true });
+    const takeOver = () => { if (glide) { cancelAnimationFrame(glide); glide = 0; } };
+    addEventListener('wheel', takeOver, { passive: true });
+    addEventListener('keydown', takeOver);
+    addEventListener('touchstart', () => { touching = true; takeOver(); }, { passive: true });
+    addEventListener('touchend', () => { touching = false; clearTimeout(settleT); settleT = setTimeout(settle, 140); }, { passive: true });
+    addEventListener('touchcancel', () => { touching = false; }, { passive: true });
+  }
   let rt;
   new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(layout, 120); }).observe(hero);
   requestAnimationFrame(() => {
