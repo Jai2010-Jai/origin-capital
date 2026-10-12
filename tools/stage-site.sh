@@ -11,6 +11,6 @@ cp index.html og.jpg apple-touch-icon.png favicon.svg dist/
 cp film/manifest.js dist/film/
 cp -R film/frames dist/film/frames
 mkdir -p dist/film/intro && cp film/intro/intro.mp4 film/intro/poster.webp film/intro/end.webp dist/film/intro/
-mkdir -p dist/film/audio && cp film/audio/firebird-finale.m4a dist/film/audio/
+mkdir -p dist/film/audio && cp film/audio/firebird-ride.m4a dist/film/audio/
 mkdir -p dist/film/after && cp film/after/*.webp dist/film/after/
 du -sh dist | awk '{print "dist/ " $1}'

@@ -779,15 +779,17 @@
     lastDir = 1; glideTo(stopYs()[1]);                               // straight to the first era
   });
 
-  // ---------- music: Stravinsky, The Firebird (1919 suite), VI. Finale ----------
+  // ---------- music: Stravinsky, The Firebird (1919 suite), VI. Finale, from 2:20 ----------
   // Off until the visitor turns it on (the toggle only appears once they are in the timeline). Then it swells in
-  // slowly from 2:20 and simply keeps going, whatever the scroll does; at the end of the track it picks up at 2:20
-  // again. Off fades it out and pauses it; on resumes.
-  const MUSIC_FROM = 140, VOLUME = .06;           // 2:20; ~10 dB under the earlier .17, which is what sounds half as loud
+  // slowly and simply keeps going, whatever the scroll does, looping at the end. Off fades it out and pauses it.
+  // firebird-ride.m4a is the finale cut from 2:20 (1.3 MB). It is decoded and played as a Web Audio buffer, not an
+  // <audio> element: iPhones ignore volume on <audio> (and could skip the gain on one routed through Web Audio), so
+  // a buffer through a gain node is the one way the level is the same everywhere.
+  const VOLUME = .03;                             // half of the earlier .06
   const SWELL = 3;                                // seconds to come up to full volume
   const sound = (() => {
     const btn = document.getElementById('sound'), lbl = btn.querySelector('.lbl');
-    let on = false, ctx, gain, a, fade = 0;
+    let on = false, ctx, gain, track, started = false, fade = 0;
     // fades are stepped by hand (not one scheduled ramp) so a fade can be interrupted cleanly in any browser
     function fadeTo(v, secs, ease) {
       clearInterval(fade);
@@ -801,23 +803,30 @@
     const easeIn = x => x * x * x;                 // starts almost silent and swells: it comes on slowly
     const easeOut = x => 1 - (1 - x) * (1 - x);
     function play() {
-      if (!a) {
-        a = new Audio('film/audio/firebird-finale.m4a');
-        a.preload = 'auto';
-        a.addEventListener('ended', () => { a.currentTime = MUSIC_FROM; if (on) a.play().catch(() => {}); });
-        // volume goes through Web Audio: iOS ignores <audio>.volume
+      if (!ctx) {
+        // iPhone: play like media, so the ring/silent switch does not mute it (iOS 17+)
+        try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
         ctx = new (window.AudioContext || window.webkitAudioContext)();
-        gain = ctx.createGain(); gain.gain.value = 0;
-        ctx.createMediaElementSource(a).connect(gain).connect(ctx.destination);
-        a.currentTime = MUSIC_FROM;
+        gain = ctx.createGain(); gain.gain.value = 0; gain.connect(ctx.destination);
+        // a silent blip inside the tap itself unlocks audio on older iPhones
+        const blip = ctx.createBufferSource(); blip.buffer = ctx.createBuffer(1, 1, 22050); blip.connect(ctx.destination); blip.start(0);
+        track = fetch('film/audio/firebird-ride.m4a').then(r => r.arrayBuffer())
+          .then(b => new Promise((ok, no) => ctx.decodeAudioData(b, ok, no)));
       }
       ctx.resume();
-      a.play().then(() => { if (on) fadeTo(VOLUME, SWELL, easeIn); }, () => { on = false; render(); });
+      track.then(buf => {
+        if (!on) return;
+        if (!started) {
+          const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true; src.connect(gain); src.start(0);
+          started = true;
+        }
+        fadeTo(VOLUME, SWELL, easeIn);
+      }, () => { on = false; render(); stopRide(); });
     }
     function pause() {
-      if (!a) return;
+      if (!ctx) return;
       fadeTo(0, .6, easeOut);
-      setTimeout(() => { if (!on) a.pause(); }, 700);
+      setTimeout(() => { if (!on) ctx.suspend(); }, 700);    // suspending the context pauses the track where it is
     }
     function render() {
       btn.classList.toggle('on', on);
@@ -954,37 +963,29 @@
 
   // ---------- the ride ----------
   // Turning the sound on inside the film starts a ride: the film plays itself forward at a steady cinematic pace,
-  // easing into each era and holding there long enough to read it, all the way to the page below, just as the music
-  // builds to its final chords. Scrolling is paused for the ride; the sound toggle (or Esc) gets off early and hands
+  // flowing straight through the eras without stopping, all the way to the page below as the music builds. Scrolling is paused for the ride; the sound toggle (or Esc) gets off early and hands
   // control straight back. Once it has reached the end the eras are unlocked: scroll back through them freely.
   // It runs once per visit.
-  const RIDE_FPS = 22, RIDE_HOLD = 1500;                   // film frames a second between eras; ms held at each era
+  const RIDE_FPS = 22;                                    // film frames a second
   let riding = false, rideDone = false, ride = 0;
-  const easeIO = x => -(Math.cos(Math.PI * x) - 1) / 2;
   function startRide() {
     if (!filmOn || reduced || riding || rideDone) return;
     const ys = stopYs(), end = ys[ys.length - 1], y0 = scrollY;
     if (y0 >= end - 2) return;                              // already past the film
     cancelAnimationFrame(glide); glide = 0;
-    // the route: from here through every era stop still ahead, to the page below
-    const legs = [];
-    let from = y0, t = 0;
-    for (const to of ys.filter(y => y > y0 + 2)) {
-      const dur = Math.max(900, Math.abs(to - from) / jSpan * FILM.frames / RIDE_FPS * 1000);
-      legs.push({ from, to, t0: t, t1: t + dur }); t += dur;
-      if (to !== end) t += RIDE_HOLD;                       // hold at each era
-      from = to;
-    }
+    // one continuous run from here to the page below at an even pace (no stops), easing in and out at the ends
+    const dur = Math.max(4000, (end - y0) / jSpan * FILM.frames / RIDE_FPS * 1000), R = Math.min(1500, dur / 4);
+    const vmax = 1 / (dur - R);                             // trapezoid speed: ramp up over R, cruise, ramp down over R
+    const at = el => el <= R ? vmax * el * el / (2 * R)
+      : el >= dur - R ? 1 - vmax * (dur - el) * (dur - el) / (2 * R)
+      : vmax * (R / 2 + el - R);
     riding = true; document.documentElement.classList.add('riding');
     const start = performance.now();
-    let set = y0;
     const step = now => {
       if (!riding) return;
-      const el = now - start, leg = legs.find(l => el < l.t1) || legs[legs.length - 1];
-      const x = el <= leg.t0 ? 0 : Math.min(1, (el - leg.t0) / (leg.t1 - leg.t0));
-      set = Math.round(leg.from + (leg.to - leg.from) * easeIO(x));
-      scrollTo(0, set);
-      if (el >= legs[legs.length - 1].t1) { stopRide(true); return; }
+      const el = Math.min(dur, now - start);
+      scrollTo(0, Math.round(y0 + (end - y0) * at(el)));
+      if (el >= dur) { stopRide(true); return; }
       ride = requestAnimationFrame(step);
     };
     ride = requestAnimationFrame(step);
