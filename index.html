@@ -278,8 +278,14 @@
     padding: clamp(20px, 3vh, 30px) 0; border-top: 1px solid rgba(28, 26, 23, .16);
   }
   .a-card::before { content: counter(co, decimal-leading-zero); min-width: 2.2em; font: 500 10px/1 var(--sans); letter-spacing: .16em; font-variant-numeric: tabular-nums; color: var(--ink-faint); }
-  .a-card h3 { margin: 0; font: 400 clamp(24px, 2vw, 34px)/1.05 var(--serif); letter-spacing: -.005em; font-variant-numeric: lining-nums; color: var(--ink); transition: transform .5s cubic-bezier(.2, .7, .2, 1); }
-  .a-card:hover h3 { transform: translateX(4px); }
+  .a-card h3 { margin: 0; font: 400 clamp(24px, 2vw, 34px)/1.05 var(--serif); letter-spacing: -.005em; font-variant-numeric: lining-nums; color: var(--ink); transition: margin-left .5s cubic-bezier(.2, .7, .2, 1); }
+  .a-card:hover h3 { margin-left: 4px; }                  /* a nudge by margin: a transform would shrink the row's link to the name */
+  /* each company links to its site: the whole row is the link (stretched over the card), with a quiet arrow on hover */
+  .a-card { position: relative; }
+  .a-card h3 a::after { content: ""; position: absolute; inset: 0; }
+  .a-card .ext { display: inline-block; margin-left: .3em; font: 400 .6em/1 var(--sans); color: var(--ink-dim); opacity: 0; transform: translate(-3px, 2px); transition: opacity .3s, transform .4s cubic-bezier(.2, .7, .2, 1); vertical-align: super; }
+  .a-card:hover .ext, .a-card a:focus-visible .ext { opacity: 1; transform: translate(0, 0); }
+  .a-card a:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
   .a-card p { margin: 0; font: 500 10px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-faint); white-space: nowrap; }
   .a-all { display: flex; justify-content: center; margin-top: clamp(40px, 6vh, 70px); }
 
@@ -487,21 +493,21 @@
       <p>A selection of founders we are proud to support across AI, science, infrastructure, and more.</p>
     </div>
     <ul class="a-grid">
-      <li class="a-card"><h3>Micro1</h3><p>Scouted</p></li>
-      <li class="a-card"><h3>Etched</h3><p>Series A</p></li>
-      <li class="a-card"><h3>Rogo</h3><p>Series A</p></li>
-      <li class="a-card"><h3>Wispr</h3><p>Seed</p></li>
-      <li class="a-card"><h3>Wombo AI</h3><p>Seed</p></li>
-      <li class="a-card"><h3>Superpower</h3><p>Seed</p></li>
-      <li class="a-card"><h3>Babylon Bio</h3><p>Seed</p></li>
-      <li class="a-card"><h3>Lula / Gail</h3><p>Seed</p></li>
+      <li class="a-card"><h3><a href="https://www.micro1.ai" target="_blank" rel="noopener">Micro1<span class="ext" aria-hidden="true">↗</span></a></h3><p>Scouted</p></li>
+      <li class="a-card"><h3><a href="https://www.etched.com" target="_blank" rel="noopener">Etched<span class="ext" aria-hidden="true">↗</span></a></h3><p>Series A</p></li>
+      <li class="a-card"><h3><a href="https://rogo.com" target="_blank" rel="noopener">Rogo<span class="ext" aria-hidden="true">↗</span></a></h3><p>Series A</p></li>
+      <li class="a-card"><h3><a href="https://wisprflow.ai" target="_blank" rel="noopener">Wispr<span class="ext" aria-hidden="true">↗</span></a></h3><p>Seed</p></li>
+      <li class="a-card"><h3><a href="https://wombo.ai" target="_blank" rel="noopener">Wombo AI<span class="ext" aria-hidden="true">↗</span></a></h3><p>Seed</p></li>
+      <li class="a-card"><h3><a href="https://superpower.com" target="_blank" rel="noopener">Superpower<span class="ext" aria-hidden="true">↗</span></a></h3><p>Seed</p></li>
+      <li class="a-card"><h3><a href="https://babylon.bio" target="_blank" rel="noopener">Babylon Bio<span class="ext" aria-hidden="true">↗</span></a></h3><p>Seed</p></li>
+      <li class="a-card"><h3><a href="https://www.meetgail.com" target="_blank" rel="noopener">Lula / Gail<span class="ext" aria-hidden="true">↗</span></a></h3><p>Seed</p></li>
       <li class="a-card"><h3>Protector</h3><p>Seed</p></li>
-      <li class="a-card"><h3>Simly</h3><p>Seed</p></li>
-      <li class="a-card"><h3>Pure Poker</h3><p>Seed</p></li>
-      <li class="a-card"><h3>Kled AI</h3><p>Seed</p></li>
-      <li class="a-card"><h3>Jolly</h3><p>Seed</p></li>
-      <li class="a-card"><h3>Rove</h3><p>Seed</p></li>
-      <li class="a-card"><h3>Linq</h3><p>Seed</p></li>
+      <li class="a-card"><h3><a href="https://www.simly.io" target="_blank" rel="noopener">Simly<span class="ext" aria-hidden="true">↗</span></a></h3><p>Seed</p></li>
+      <li class="a-card"><h3><a href="https://pureapp.com" target="_blank" rel="noopener">Pure Poker<span class="ext" aria-hidden="true">↗</span></a></h3><p>Seed</p></li>
+      <li class="a-card"><h3><a href="https://www.kled.ai" target="_blank" rel="noopener">Kled AI<span class="ext" aria-hidden="true">↗</span></a></h3><p>Seed</p></li>
+      <li class="a-card"><h3><a href="https://jolly.com" target="_blank" rel="noopener">Jolly<span class="ext" aria-hidden="true">↗</span></a></h3><p>Seed</p></li>
+      <li class="a-card"><h3><a href="https://www.rove.com" target="_blank" rel="noopener">Rove<span class="ext" aria-hidden="true">↗</span></a></h3><p>Seed</p></li>
+      <li class="a-card"><h3><a href="https://linqapp.com" target="_blank" rel="noopener">Linq<span class="ext" aria-hidden="true">↗</span></a></h3><p>Seed</p></li>
     </ul>
   </section>
 
