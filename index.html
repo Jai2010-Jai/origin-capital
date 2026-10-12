@@ -785,7 +785,7 @@
   // firebird-ride.m4a is the finale cut from 2:20 (1.3 MB). It is decoded and played as a Web Audio buffer, not an
   // <audio> element: iPhones ignore volume on <audio> (and could skip the gain on one routed through Web Audio), so
   // a buffer through a gain node is the one way the level is the same everywhere.
-  const VOLUME = .03;                             // half of the earlier .06
+  const VOLUME = .015;                            // half of the earlier .03
   const SWELL = 3;                                // seconds to come up to full volume
   const sound = (() => {
     const btn = document.getElementById('sound'), lbl = btn.querySelector('.lbl');
