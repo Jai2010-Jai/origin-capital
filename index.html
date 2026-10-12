@@ -783,7 +783,7 @@
   // Off until the visitor turns it on (the toggle only appears once they are in the timeline). Then it swells in
   // slowly from 2:20 and simply keeps going, whatever the scroll does; at the end of the track it picks up at 2:20
   // again. Off fades it out and pauses it; on resumes.
-  const MUSIC_FROM = 140, VOLUME = .17;           // 2:20; 60% of the earlier .29
+  const MUSIC_FROM = 140, VOLUME = .06;           // 2:20; ~10 dB under the earlier .17, which is what sounds half as loud
   const SWELL = 3;                                // seconds to come up to full volume
   const sound = (() => {
     const btn = document.getElementById('sound'), lbl = btn.querySelector('.lbl');
@@ -825,7 +825,7 @@
       btn.setAttribute('aria-pressed', on);
       lbl.textContent = on ? 'Sound on' : 'Turn sound on';
     }
-    btn.addEventListener('click', () => { on = !on; render(); on ? play() : pause(); show(); });
+    btn.addEventListener('click', () => { on = !on; render(); on ? play() : pause(); show(); on ? startRide() : stopRide(); });
     render();
     return { get on() { return on; } };
   })();
@@ -930,7 +930,7 @@
     glide = requestAnimationFrame(step);
   }
   function settle() {
-    if (touching || glide || reduced) return;
+    if (touching || glide || riding || reduced) return;
     const y = scrollY, ys = stopYs();
     if (y >= ys[ys.length - 1] - 2) return;                         // the page below the film scrolls freely
     if (ys.some(s => Math.abs(s - y) < 3)) return;                  // already at a stop
@@ -951,6 +951,60 @@
     addEventListener('touchend', () => { touching = false; clearTimeout(settleT); settleT = setTimeout(settle, 140); }, { passive: true });
     addEventListener('touchcancel', () => { touching = false; }, { passive: true });
   }
+
+  // ---------- the ride ----------
+  // Turning the sound on inside the film starts a ride: the film plays itself forward at a steady cinematic pace,
+  // easing into each era and holding there long enough to read it, all the way to the page below, just as the music
+  // builds to its final chords. Scrolling is paused for the ride; the sound toggle (or Esc) gets off early and hands
+  // control straight back. Once it has reached the end the eras are unlocked: scroll back through them freely.
+  // It runs once per visit.
+  const RIDE_FPS = 22, RIDE_HOLD = 1500;                   // film frames a second between eras; ms held at each era
+  let riding = false, rideDone = false, ride = 0;
+  const easeIO = x => -(Math.cos(Math.PI * x) - 1) / 2;
+  function startRide() {
+    if (!filmOn || reduced || riding || rideDone) return;
+    const ys = stopYs(), end = ys[ys.length - 1], y0 = scrollY;
+    if (y0 >= end - 2) return;                              // already past the film
+    cancelAnimationFrame(glide); glide = 0;
+    // the route: from here through every era stop still ahead, to the page below
+    const legs = [];
+    let from = y0, t = 0;
+    for (const to of ys.filter(y => y > y0 + 2)) {
+      const dur = Math.max(900, Math.abs(to - from) / jSpan * FILM.frames / RIDE_FPS * 1000);
+      legs.push({ from, to, t0: t, t1: t + dur }); t += dur;
+      if (to !== end) t += RIDE_HOLD;                       // hold at each era
+      from = to;
+    }
+    riding = true; document.documentElement.classList.add('riding');
+    const start = performance.now();
+    let set = y0;
+    const step = now => {
+      if (!riding) return;
+      const el = now - start, leg = legs.find(l => el < l.t1) || legs[legs.length - 1];
+      const x = el <= leg.t0 ? 0 : Math.min(1, (el - leg.t0) / (leg.t1 - leg.t0));
+      set = Math.round(leg.from + (leg.to - leg.from) * easeIO(x));
+      scrollTo(0, set);
+      if (el >= legs[legs.length - 1].t1) { stopRide(true); return; }
+      ride = requestAnimationFrame(step);
+    };
+    ride = requestAnimationFrame(step);
+  }
+  function stopRide(finished) {
+    if (!riding) return;
+    riding = false; cancelAnimationFrame(ride);
+    document.documentElement.classList.remove('riding');
+    if (finished) rideDone = true;
+    else { lastDir = 1; clearTimeout(settleT); settleT = setTimeout(settle, 140); }   // got off early: settle on the next era
+  }
+  // scrolling is paused while riding (wheel, touch drag, scroll keys); Esc gets off
+  const hold = e => { if (riding) e.preventDefault(); };
+  addEventListener('wheel', hold, { passive: false });
+  addEventListener('touchmove', hold, { passive: false });
+  addEventListener('keydown', e => {
+    if (!riding) return;
+    if (e.key === 'Escape') { stopRide(); return; }
+    if ([' ', 'PageDown', 'PageUp', 'ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) e.preventDefault();
+  });
   let rt;
   new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(layout, 120); }).observe(hero);
   requestAnimationFrame(() => {
