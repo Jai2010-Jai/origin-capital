@@ -613,8 +613,18 @@
 
   // Frames: every JPEG is fetched once and kept compressed (~13 MB). Only a window around the
   // playhead is decoded, off the main thread, into ImageBitmaps, so a draw never waits on a decode.
+  // On a narrow (phone) screen only a slice of each frame is ever visible, so only that slice is decoded, at
+  // no more pixels than the canvas shows: ~4× less memory on a phone, which keeps mobile browsers from reloading.
+  // (Ashok's change from 59a054c.)
   const srcs = [], bmps = new Map(), decoding = new Set();
-  const AHEAD = 20, BEHIND = 6, KEEP = 24, LANES = 4;           // ~27 decoded 1080p frames live (~225 MB)
+  const AHEAD = 20, BEHIND = 6, KEEP = 24, LANES = 4;           // ~27 decoded frames live (≤ ~225 MB on a desktop)
+  let slice = { sx: 0, sw: 1920, rw: 1920, rh: 1080 };
+  function sliceFilm() {
+    const { vw, vh } = cam, fw = Math.max(vw, vh * 16 / 9), W = FILM.w, H = FILM.h;
+    const sw = Math.min(W, Math.ceil(W * vw / fw) + 8), sx = Math.max(0, Math.floor((W - sw) / 2));
+    const k = Math.min(1, (fw * fd) / W);                         // bitmap pixels per source pixel
+    slice = { sx, sw, rw: Math.max(1, Math.round(sw * k)), rh: Math.max(1, Math.round(H * k)) };
+  }
   let head = 0, dir = 1;
   const fetchFrame = i => location.protocol === 'file:'
     ? new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = FILM.src(i); })
@@ -631,18 +641,24 @@
     for (let k = 0; k < 6; k++) pump();
   }
   function decode(i) {
-    if (i < 0 || i >= FILM.frames || !srcs[i] || bmps.has(i) || decoding.has(i) || decoding.size >= LANES) return;
+    if (i < 0 || i >= FILM.frames || !srcs[i] || (bmps.has(i) && bmps.get(i).sl === slice) || decoding.has(i) || decoding.size >= LANES) return;
     decoding.add(i);
-    const src = srcs[i];
-    (src instanceof Blob ? createImageBitmap(src) : src.decode().then(() => createImageBitmap(src))).then(b => {
+    const src = srcs[i], sl = slice;
+    let g = sl;                                                    // where in the frame the bitmap sits
+    const cut = s => createImageBitmap(s, sl.sx, 0, sl.sw, FILM.h, { resizeWidth: sl.rw, resizeHeight: sl.rh, resizeQuality: 'high' })
+      .catch(() => { g = { sx: 0, sw: FILM.w }; return createImageBitmap(s); });   // can't slice: the whole frame
+    (src instanceof Blob ? cut(src) : src.decode().then(() => cut(src))).then(b => {
       decoding.delete(i);
-      if (Math.abs(i - head) > KEEP) b.close();
-      else { bmps.set(i, b); if (Math.abs(i - head) <= 1) kick(); }
+      if (Math.abs(i - head) > KEEP) { b.close(); return schedule(); }
+      const old = bmps.get(i);
+      bmps.set(i, { b, sl, sx: g.sx, sw: g.sw });                // each bitmap remembers its slice and its place
+      if (old && old !== drawnA && old !== drawnB) old.b.close();
+      if (Math.abs(i - head) <= 1 || old) kick();
       schedule();
     }, () => decoding.delete(i));
   }
   function schedule() {
-    for (const [i, b] of bmps) if (Math.abs(i - head) > KEEP) { b.close(); bmps.delete(i); }
+    for (const [i, e] of bmps) if (Math.abs(i - head) > KEEP) { if (e !== drawnA && e !== drawnB) e.b.close(); bmps.delete(i); }
     for (let d = 0; d <= AHEAD && decoding.size < LANES; d++) {
       decode(head + d * dir);
       if (d <= BEHIND) decode(head - d * dir);
@@ -723,8 +739,9 @@
       const fh = Math.max(vh, vw * 9 / 16), fw = fh * 16 / 9, x = (vw - fw) / 2, y = (vh - fh) / 2;
       fc.clearRect(0, 0, vw, vh);
       fc.save();
-      if (a && paper < 1) fc.drawImage(a, x, y, fw, fh);
-      if (a && b && k > .02 && paper < 1) { fc.globalAlpha = k; fc.drawImage(b, x, y, fw, fh); }  // sub-frame blend
+      const put = e => fc.drawImage(e.b, x + e.sx * fw / FILM.w, y, e.sw * fw / FILM.w, fh);
+      if (a && paper < 1) put(a);
+      if (a && b && k > .02 && paper < 1) { fc.globalAlpha = k; put(b); }  // sub-frame blend
       if (paper > 0) { fc.globalAlpha = paper; fc.fillStyle = PAPER; fc.fillRect(0, 0, vw, vh); }
       fc.restore();
     }
@@ -887,7 +904,7 @@
   // ---------- layout & loop ----------
   function layout() {
     cam = { vw: hero.clientWidth, vh: hero.clientHeight };
-    if (filmOn) { measure(); sizeFilm(); drawn = ''; camera(); }
+    if (filmOn) { measure(); sizeFilm(); sliceFilm(); schedule(); drawn = ''; camera(); }
   }
   // journey geometry is measured on layout, so a scroll tick never forces a layout read
   let target = 0, raf = 0, last = 0, jTop = 0, jSpan = 1;
@@ -984,7 +1001,7 @@
     const at = el => el <= R ? vmax * el * el / (2 * R)
       : el >= dur - R ? 1 - vmax * (dur - el) * (dur - el) / (2 * R)
       : vmax * (R / 2 + el - R);
-    riding = true; document.documentElement.classList.add('riding');
+    riding = true; document.documentElement.classList.add('riding'); holdScroll(true);
     const start = performance.now();
     const step = now => {
       if (!riding) return;
@@ -997,15 +1014,19 @@
   }
   function stopRide(finished) {
     if (!riding) return;
-    riding = false; cancelAnimationFrame(ride);
+    riding = false; cancelAnimationFrame(ride); holdScroll(false);
     document.documentElement.classList.remove('riding');
     if (finished) rideDone = true;
     else { lastDir = 1; clearTimeout(settleT); settleT = setTimeout(settle, 140); }   // got off early: settle on the next era
   }
-  // scrolling is paused while riding (wheel, touch drag, scroll keys); Esc gets off
-  const hold = e => { if (riding) e.preventDefault(); };
-  addEventListener('wheel', hold, { passive: false });
-  addEventListener('touchmove', hold, { passive: false });
+  // scrolling is paused while riding (wheel, touch drag, scroll keys); Esc gets off.
+  // The blocking (non-passive) wheel/touch listeners exist only during a ride: while one is attached, a phone must
+  // ask the page before every scroll step instead of scrolling on its own, which makes all scrolling feel laggy.
+  const hold = e => e.preventDefault();
+  function holdScroll(on) {
+    const f = on ? addEventListener : removeEventListener;
+    f('wheel', hold, { passive: false }); f('touchmove', hold, { passive: false });
+  }
   addEventListener('keydown', e => {
     if (!riding) return;
     if (e.key === 'Escape') { stopRide(); return; }
