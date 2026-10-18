@@ -629,16 +629,30 @@
   const fetchFrame = i => location.protocol === 'file:'
     ? new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = FILM.src(i); })
     : fetch(FILM.src(i)).then(r => r.blob());
+  // Download order: first the stretch of film the camera is heading into (about an era ahead of the playhead, so
+  // the first era is in while the opening film plays), then everything else coarse-to-fine. Re-chosen for every
+  // request, so it follows the visitor (and the glides) around the film.
+  const FETCH_AHEAD = 260, FETCH_BEHIND = 24, FETCHES = 8;
   function loadFrames() {
-    const n = FILM.frames, order = [], seen = new Uint8Array(n);
+    const n = FILM.frames, order = [], seen = new Uint8Array(n), asked = new Uint8Array(n), fails = new Uint8Array(n);
     for (const step of [24, 6, 2, 1]) for (let i = 0; i < n; i += step) if (!seen[i]) { seen[i] = 1; order.push(i); }
     let next = 0;
+    const want = i => i >= 0 && i < n && !asked[i];
+    function pick() {
+      for (let d = 0; d <= FETCH_AHEAD; d++) {
+        if (want(head + d * dir)) return head + d * dir;
+        if (d <= FETCH_BEHIND && want(head - d * dir)) return head - d * dir;
+      }
+      while (next < order.length && asked[order[next]]) next++;
+      return next < order.length ? order[next] : -1;
+    }
     const pump = () => {
-      if (next >= order.length) return;
-      const i = order[next++];
-      fetchFrame(i).then(src => { srcs[i] = src; schedule(); }, () => {}).finally(pump);
+      const i = pick();
+      if (i < 0) return;
+      asked[i] = 1;
+      fetchFrame(i).then(src => { srcs[i] = src; schedule(); }, () => { if (++fails[i] < 3) asked[i] = 0; }).finally(pump);
     };
-    for (let k = 0; k < 6; k++) pump();
+    for (let k = 0; k < FETCHES; k++) pump();
   }
   function decode(i) {
     if (i < 0 || i >= FILM.frames || !srcs[i] || (bmps.has(i) && bmps.get(i).sl === slice) || decoding.has(i) || decoding.size >= LANES) return;
@@ -943,20 +957,36 @@
   const stopYs = () => [jTop, ...STOPS.map(f => jTop + jSpan * (START + f / (FILM.frames - 1) * (END - START))), jTop + jSpan];
   let glide = 0, touching = false, settleT = 0, lastY = scrollY, lastDir = 0;
   const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  // Glides and the ride never run ahead of the film: a step only goes ahead once the frame it lands on is decoded
+  // (a slow connection holds for a beat instead of stuttering past missing frames), and never waits more than 2.5 s.
+  function readyAt(y) {
+    const p = clamp01((y - jTop) / jSpan);
+    if (p <= START || p >= END) return true;
+    const f = Math.round(ramp(p, START, END) * (FILM.frames - 1));
+    return bmps.has(f) || bmps.has(f - 1) || bmps.has(f + 1);
+  }
+  function clock() {                                                 // time that only runs while the film keeps up
+    let el = 0, last = null, waited = 0;
+    return (now, yAt) => {
+      const dt = last === null ? 0 : Math.min(100, now - last); last = now;
+      if (readyAt(yAt(el + dt)) || waited > 2500) { el += dt; waited = 0; } else waited += dt;
+      return el;
+    };
+  }
   function glideTo(y) {
     cancelAnimationFrame(glide);
     const y0 = scrollY, dy = y - y0;
     if (Math.abs(dy) < 2) return;
     const frames = Math.abs(dy) / jSpan * FILM.frames;              // film frames the glide will play through
     const dur = Math.min(2600, Math.max(700, frames / 110 * 1000)); // ~110 frames a second: brisk, but every frame shows
-    const t0 = performance.now();
+    const yAt = el => y0 + dy * ease(Math.min(1, el / dur)), tick = clock();
     let set = y0;
     const step = now => {
       if (Math.abs(scrollY - set) > 2) { glide = 0; return; }       // something else moved the page (a link, a jump): let it
-      const x = Math.min(1, (now - t0) / dur);
-      set = Math.round(y0 + dy * ease(x));
+      const el = tick(now, yAt);
+      set = Math.round(yAt(el));
       scrollTo(0, set);
-      glide = x < 1 ? requestAnimationFrame(step) : 0;
+      glide = el < dur ? requestAnimationFrame(step) : 0;
     };
     glide = requestAnimationFrame(step);
   }
@@ -1002,11 +1032,11 @@
       : el >= dur - R ? 1 - vmax * (dur - el) * (dur - el) / (2 * R)
       : vmax * (R / 2 + el - R);
     riding = true; document.documentElement.classList.add('riding'); holdScroll(true);
-    const start = performance.now();
+    const yAt = el => y0 + (end - y0) * at(Math.min(dur, el)), tick = clock();
     const step = now => {
       if (!riding) return;
-      const el = Math.min(dur, now - start);
-      scrollTo(0, Math.round(y0 + (end - y0) * at(el)));
+      const el = Math.min(dur, tick(now, yAt));
+      scrollTo(0, Math.round(yAt(el)));
       if (el >= dur) { stopRide(true); return; }
       ride = requestAnimationFrame(step);
     };
